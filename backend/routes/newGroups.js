@@ -13,7 +13,7 @@ router.post('/', function (req, res) {
             res.end("Database Error");
         }
         if (result && result.length > 0 && result[0][0].flag == 'Group_exists') {
-            res.writeHead(500, {
+            res.writeHead(401, {
                 'Content-Type': 'text/plain'
                 });
             res.end('Group Already Exists')

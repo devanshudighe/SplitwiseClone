@@ -118,7 +118,10 @@ class Register extends Component {
       return <Redirect to="/login" />;
     }
     return (
-      <Container>
+      <Container fluid 
+      style= {{
+        padding : 60
+      }}>
         <Row className="justify-content-md-center">
           <Col xs lg="3">
             <Media>

@@ -11,6 +11,7 @@ var myGroups = require('./routes/myGroups')
 var addBill = require('./routes/addUserBill')
 var dashboard = require('./routes/dashboard')
 var recentActivity = require('./routes/recentActivity')
+var groupDetails = require('./routes/groupDetails')
 
 app.use('/login',login)
 app.use('/signup',signup)
@@ -22,6 +23,7 @@ app.use('/myGroups',myGroups)
 app.use('/bill',addBill)
 app.use('/dashboard',dashboard)
 app.use('/recent',recentActivity)
+app.use('/groupdetails',groupDetails)
 
 
 const port = process.env.PORT || 3001;

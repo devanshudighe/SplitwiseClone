@@ -39,10 +39,11 @@ router.post('/', async function (req, res) {
                         phone : result[0][0].phone,
                         timeZone : result[0][0].timeZone
                     }
+                    console.log(user)
                     res.status(200).send(user)
                 }
                 else{
-                    res.status(200).send("Wrong Password")
+                    res.status(401).send("Wrong Password")
                 }
             }
             else {

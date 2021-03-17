@@ -1,8 +1,10 @@
 use splitwise;
+
+DROP Procedure if EXISTS  `getUserInfo`;
 DELIMITER ;;
-CREATE PROCEDURE `getUserInfo` (email varchar(50))
+CREATE PROCEDURE `getUserInfo` (_email varchar(50))
 BEGIN
-SELECT user_id,name,email,password,phone,currency,language,timeZone  FROM UserDetails WHERE email = email;
+SELECT user_id,name,email,password,phone,currency,language,timeZone  FROM UserDetails WHERE email = _email;
 END;;
 DELIMITER ;
 
@@ -40,10 +42,11 @@ DELIMITER ;
 
 
 /* Get Updated User info */
+DROP PROCEDURE IF EXISTS `getUpdatedUserInfo`;
 DELIMITER ;;
 CREATE PROCEDURE `getUpdatedUserInfo` (userId bigint)
 BEGIN
-SELECT user_id,name,email,password,phone,currency,language,timeZone
+SELECT user_id,name,email,password,phone,currency,language,Timezone
 FROM UserDetails 
 WHERE userId = user_id;
 END;;
@@ -126,14 +129,10 @@ CREATE PROCEDURE `groupInvitationDashboard` (
     in_user_id BIGINT
 )
 BEGIN
-    SELECT group_name 
-    FROM GroupInfo 
-    WHERE group_id IN (
-        SELECT group_id 
-        FROM UserGroupInfo 
-        WHERE user_id = in_user_id 
-        AND is_member = 'N'
-    );
+    SELECT group_name, group_image, is_member
+    FROM GroupInfo JOIN UserGroupInfo ON 
+    GroupInfo.group_id = UserGroupInfo.group_id 
+    WHERE UserGroupInfo.user_id = in_user_id;
     
 END ;;
 DELIMITER ;
@@ -148,7 +147,9 @@ CREATE PROCEDURE `groupInvitationAccepted` (
 )
 BEGIN
     
-    UPDATE UserGroupInfo SET is_member = 'Y' WHERE user_id = in_user_id;
+    UPDATE UserGroupInfo SET is_member = 'Y' WHERE user_id = in_user_id AND group_id = (
+        SELECT group_id from GroupInfo WHERE group_name = in_group_name
+    );
     SELECT "MEMBER_ACCEPTED" AS flag;
     
 END ;;
@@ -236,6 +237,53 @@ BEGIN
 
     SELECT "BILL_ADDED" AS flag;
 
+END ;;
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `Get_Group_Details`;
+DELIMITER ;;
+CREATE PROCEDURE `Get_Group_Details` (
+    in_user_id INT,
+    in_group_name VARCHAR(255)
+)
+BEGIN
+    SELECT b.bill_id, 
+            b.bill_details,
+            b.bill_amount, 
+            g.group_name, 
+            b.bill_paid_by, 
+            paid_by.name as paid_by_name,
+            gu.user_id,
+            u.name,
+            CASE 
+                WHEN gu.user_id = b.bill_paid_by 
+                THEN 'GET' 
+                ELSE 'PAY' 
+            END AS pay_get, 
+            CASE 
+                WHEN gu.user_id = b.bill_paid_by 
+                THEN (b.bill_amount / gu_count.no_of_users) *  (gu_count.no_of_users - 1)
+                ELSE (b.bill_amount / (gu_count.no_of_users))
+            END AS split_amount,
+            b.bill_add_time
+    FROM UserBillDetails b
+    LEFT JOIN GroupInfo g ON b.group_id = g.group_id
+    LEFT JOIN UserGroupInfo gu ON b.group_id = gu.group_id
+    LEFT JOIN UserDetails u ON gu.user_id = u.user_id 
+    LEFT JOIN (
+        SELECT count(user_id) AS no_of_users,
+                group_id
+        FROM UserGroupInfo gu
+        GROUP BY group_id
+    ) gu_count ON b.group_id = gu_count.group_id
+    LEFT JOIN (
+        SELECT DISTINCT b.bill_paid_by, 
+                u.name 
+        FROM UserDetails u JOIN UserBillDetails b ON u.user_id = b.bill_paid_by
+    ) paid_by ON b.bill_paid_by = paid_by.bill_paid_by
+    WHERE u.user_id = in_user_id
+    AND g.group_name = in_group_name
+    ORDER BY b.bill_add_time DESC ;
 END ;;
 DELIMITER ;
 

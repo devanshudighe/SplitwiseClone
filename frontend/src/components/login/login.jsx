@@ -77,16 +77,20 @@ class Login extends Component {
 
   render() {
     const { isLoggedIn, message } = this.props;
-
+    console.log(this.props);
     if (isLoggedIn) {
+      // localStorage.setItem('userId',);
       return <Redirect to="/profile" />;
     }
 
     return (
-      <Container>
+      <Container fluid 
+      style= {{
+        padding : 60
+      }}>
         <Row className="justify-content-md-center">
-        <Col xs lg="3">
-            <Media>
+          <Col xs lg="3">
+            <Col>
               <img
                 width={200}
                 height={200}
@@ -94,8 +98,11 @@ class Login extends Component {
                 src="https://assets.splitwise.com/assets/core/logo-square-65a6124237868b1d2ce2f5db2ab0b7c777e2348b797626816400534116ae22d7.svg"
                 alt="Generic placeholder"
               />
-              </Media>
-        </Col>
+            </Col>
+            {/* <div className="container">
+
+            </div> */}
+          </Col>
           <Col md="auto">
             <Form
               onSubmit={this.handleLogin}

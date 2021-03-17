@@ -8,7 +8,7 @@ import {
   } from "../actions/types";
   
   const userDetails = JSON.parse(localStorage.getItem("user"));
-  console.log(userDetails)
+  // console.log(userDetails)
   const initialState = userDetails
     ? { isLoggedIn: true, user : userDetails }
     : { isLoggedIn: false, user: {} };
@@ -31,7 +31,7 @@ import {
         return {
           ...state,
           isLoggedIn: true,
-          user: payload.user,
+          user: payload,
         };
       case LOGIN_FAIL:
         return {

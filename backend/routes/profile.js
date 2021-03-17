@@ -3,16 +3,17 @@ var router = express.Router();
 var sql = require('../sql');
 
 
-router.get('/', function (req, res) {
+router.get('/:user_id', function (req, res) {
     // const userId = localStorage.getItem('userId');
-    let userDetails = `CALL getUpdatedUserInfo('${req.body.userId}');`
+    // console.log('Inside Profile get request');
+    let userDetails = `CALL getUpdatedUserInfo('${req.params.user_id}');`
 
     sql.query(userDetails, (err, result) => {
         if (err) {
             res.writeHead(500, {
                 'Content-Type': 'text/plain'
             });
-            res.send("Database Error");
+            res.end("Database Error");
         }
         if (result && result[0].length > 0) {
             let user = {
@@ -22,23 +23,27 @@ router.get('/', function (req, res) {
                 currency: result[0][0].currency,
                 language: result[0][0].language,
                 phone: result[0][0].phone,
-                timeZone: result[0][0].timeZone
+                timeZone: result[0][0].Timezone
             }
-            res.status(200).send(user)
-        }
-        else {
-            res.writeHead(401, {
-                'Content-Type': 'text/plain'
+            res.writeHead(200, {
+                'Content-type':'application/json',
             })
-            res.end("NO_USER");
+            console.log(JSON.stringify(user))
+            res.end(JSON.stringify(user));
         }
+        // else {
+        //     res.writeHead(401, {
+        //         'Content-Type': 'text/plain'
+        //     })
+        //     res.end("NO_USER");
+        // }
     })
 });
 
 router.post('/', async function (req, res) {
     // const userId = localStorage.getItem('userId');
 
-
+    // console.log(req.body)
     let updatedUserDetails = `CALL updateUserInfo('${req.body.userId}','${req.body.name}','${req.body.email}','${req.body.currency}','${req.body.language}','${req.body.phone}','${req.body.timeZone}');`
 
     sql.query(updatedUserDetails, (err, result) => {
@@ -48,7 +53,7 @@ router.post('/', async function (req, res) {
             });
             res.end(JSON.stringify({message : err}));
         }
-        // console.log(result)
+        console.log(result)
         if (result.affectedRows > 0) {
             res.status(200).end("Profile Updated")
         }
@@ -62,9 +67,6 @@ router.post('/', async function (req, res) {
         }
     })
 });
-
-
-
 
 
 module.exports = router;

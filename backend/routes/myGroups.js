@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var sql = require('../sql')
 
-router.get('/', function (req, res) {
+router.get('/:userId', function (req, res) {
     console.log("Inside get")
-    let myInvitations = `CALL groupInvitationDashboard('${req.body.userId}')`
+    let myInvitations = `CALL groupInvitationDashboard('${req.params.userId}')`
 
     sql.query(myInvitations, (err, result) => {
         if (err) {
@@ -16,11 +16,10 @@ router.get('/', function (req, res) {
         console.log(result)
         if (result && result.length > 0) {
             res.writeHead(200, {
-                'Content-Type': 'text/plain'
+                'Content-Type': 'application/json'
                 });
             console.log(result[0])
-            res.end('Fetched Group')
-
+            res.end(JSON.stringify(result[0]))
         }
         else{
             res.writeHead(401, {
