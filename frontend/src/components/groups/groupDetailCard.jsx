@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Moment from 'react-moment';
+var numeral = require('numeral');
 
 export default class GroupDetailCard extends Component {
     render() {
@@ -16,7 +17,7 @@ export default class GroupDetailCard extends Component {
                   {groupDetail.paid_by_name} paid
                   {/* {' '} */}
                 </Row>
-                <Row>{groupDetail.bill_amount}</Row>
+                <Row>{numeral(groupDetail.bill_amount).format('$ 0,0[.]00')}</Row>
               </Col>
             </Row>
           </Col>
@@ -36,7 +37,7 @@ export default class GroupDetailCard extends Component {
                     </p>
                   ) }
                 </Row>
-                <Row>{groupDetail.split_amount}</Row>
+                <Row>{numeral(groupDetail.split_amount).format('$ 0,0[.]00')}</Row>
               </Col>
             </Row>
           </Col>

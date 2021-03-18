@@ -36,7 +36,12 @@ export default class MyGroups extends Component {
             console.log(err)
         })
     }    
-
+    handleClose = () => {
+        this.setState({
+            show : false,
+            setShow :false,
+        })
+    }
     handleShow = () => {
         this.setState({
             show : true,

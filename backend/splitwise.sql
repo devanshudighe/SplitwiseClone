@@ -1,5 +1,5 @@
 use splitwise;
-
+-------------------------------------------------------------------------------------
 DROP Procedure if EXISTS  `getUserInfo`;
 DELIMITER ;;
 CREATE PROCEDURE `getUserInfo` (_email varchar(50))
@@ -7,7 +7,7 @@ BEGIN
 SELECT user_id,name,email,password,phone,currency,language,timeZone  FROM UserDetails WHERE email = _email;
 END;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 DELIMITER ;;
 CREATE PROCEDURE `storeUserInfo`(_email varchar(50), _name varchar(50), _password varchar(50))
 BEGIN
@@ -21,7 +21,7 @@ SELECT 0 as flag;
 END IF;
 END;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 /* Update User Profile*/
 DROP PROCEDURE IF EXISTS `updateUserInfo`;
 DELIMITER ;;
@@ -39,8 +39,7 @@ WHERE user_id = userId;
 
 END;;
 DELIMITER ;
-
-
+-------------------------------------------------------------------------------------
 /* Get Updated User info */
 DROP PROCEDURE IF EXISTS `getUpdatedUserInfo`;
 DELIMITER ;;
@@ -51,7 +50,7 @@ FROM UserDetails
 WHERE userId = user_id;
 END;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 /*Store Group info*/
 DELIMITER ;;
 DROP TABLE IF EXISTS `UserGroupInfo`;
@@ -66,8 +65,7 @@ CREATE TABLE UserGroupInfo (
     -- group_image varchar(255),
     PRIMARY KEY(user_group_id)
 );
-
-
+-------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `createGroup`;
 DELIMITER ;;
 CREATE PROCEDURE `createGroup` (
@@ -89,7 +87,7 @@ BEGIN
     END IF;
 END;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `newMemberInvitation`;
 DELIMITER ;;
 CREATE PROCEDURE `newMemberInvitation` (
@@ -136,8 +134,7 @@ BEGIN
     
 END ;;
 DELIMITER ;
-
-
+-------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `groupInvitationAccepted`;
 DELIMITER ;;
 CREATE PROCEDURE `groupInvitationAccepted` (
@@ -154,7 +151,7 @@ BEGIN
     
 END ;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 /*Creating table for User Billing details for activities*/
 DROP TABLE IF EXISTS UserBillDetails;
 CREATE TABLE UserBillDetails(
@@ -168,7 +165,7 @@ CREATE TABLE UserBillDetails(
     FOREIGN KEY (bill_paid_by) REFERENCES UserDetails (user_id),
     FOREIGN KEY (group_id) REFERENCES GroupInfo (group_id)
 );
-
+-------------------------------------------------------------------------------------
 /*Creating table for groups and users along with the bill split amounts*/
 DROP TABLE IF EXISTS UserBillSplit;
 CREATE TABLE UserBillSplit(
@@ -186,7 +183,7 @@ CREATE TABLE UserBillSplit(
     FOREIGN KEY (owed_id) REFERENCES UserDetails (user_id)
 );
 
-
+-------------------------------------------------------------------------------------
 /*Procedure for adding a bill by a user*/
 DROP PROCEDURE IF EXISTS `AddUserBill`;
 DELIMITER ;;
@@ -242,7 +239,7 @@ BEGIN
 
 END ;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `Get_Group_Details`;
 DELIMITER ;;
 CREATE PROCEDURE `Get_Group_Details` (
@@ -289,7 +286,7 @@ BEGIN
     ORDER BY b.bill_add_time DESC ;
 END ;;
 DELIMITER ;
-
+-------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `recentActivity`;
 DELIMITER ;;
 CREATE PROCEDURE `recentActivity`(
@@ -333,5 +330,65 @@ BEGIN
     ) paid_by ON b.bill_paid_by = paid_by.bill_paid_by
     WHERE u.user_id = in_user_id
     ORDER BY b.bill_add_time DESC ;
+END ;;
+DELIMITER ;
+
+-------------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `get_balances`;
+DELIMITER ;;
+CREATE PROCEDURE `get_balances` (
+    in_user_id INT,
+    in_owed_id INT
+)
+BEGIN
+    SELECT 
+        final2.logged_in_user,
+        MAX(CASE WHEN final2.logged_in_user=u.user_id THEN u.name END) AS logged_in_user_name,
+        final2.checking_with_user,
+        MAX(CASE WHEN final2.checking_with_user=u.user_id THEN u.name END) AS checking_with_user_name,
+        CASE 
+            WHEN final2.net_amt > 0 THEN 'COLLECT' 
+            WHEN final2.net_amt < 0 THEN 'PAY' 
+            ELSE 'SETTLED'
+            END AS collect_or_pay,
+        final2.net_amt
+    FROM (
+        SELECT 
+            CASE WHEN net_amt > 0 THEN s1_user_id ELSE s2_owed_id END AS logged_in_user,
+            -- u.name AS logged_in_user_name,
+            CASE WHEN net_amt > 0 THEN s1_owed_id ELSE s2_user_id END AS checking_with_user,
+            -- CASE WHEN net_amt > 0 THEN 'COLLECT' ELSE 'PAY' END AS collect_or_pay,
+            net_amt
+        FROM (
+            SELECT 
+                s1.user_id as s1_user_id,
+                s1.owed_id as s1_owed_id,
+                s2.user_id as s2_user_id, 
+                s2.owed_id as s2_owed_id,
+                s1.collect_amount - s2.owed_amount as net_amt
+            FROM (
+                SELECT 
+                IFNULL(sum(amount),0) AS collect_amount, user_id, owed_id
+                FROM UserBillSplit
+                WHERE user_id=in_user_id AND owed_id=in_owed_id
+            ) AS s1 
+            JOIN (
+                SELECT IFNULL(sum(amount),0) AS owed_amount, user_id, owed_id
+                FROM UserBillSplit
+                WHERE user_id=in_owed_id AND owed_id=in_user_id
+            ) AS s2
+        ) AS final
+    ) AS final2
+    JOIN UserDetails u 
+    WHERE final2.logged_in_user IS NOT NULL
+    GROUP BY
+    final2.logged_in_user,
+    final2.checking_with_user,
+    CASE 
+        WHEN final2.net_amt > 0 THEN 'COLLECT' 
+        WHEN final2.net_amt < 0 THEN 'PAY' 
+        ELSE 'SETTLED'
+        END,
+    final2.net_amt;
 END ;;
 DELIMITER ;

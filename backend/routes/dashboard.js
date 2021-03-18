@@ -3,21 +3,23 @@ var router = express.Router();
 var sql2 = require('../sql2')
 var sql = require('../sql')
 
-router.get('/', async (req, res) => {
-    const getRestUsersSql = `select distinct gu2.user_id as owed_id from UserGroupInfo gu1 join UserGroupInfo gu2 on gu1.user_id <> gu2.user_id and gu1.group_id = gu2.group_id where gu1.user_id = ${req.body.user_id} and gu1.group_id = gu2.group_id;`;
-    const balancesSql = `select collect_amount-owed_amount as net_amount from (select ifnull(sum(amount),0) as collect_amount from UserBillSplit where user_id=${req.body.user_id} and owed_id=?) as s1 join (select ifnull(sum(amount),0) as owed_amount from UserBillSplit where user_id=? and owed_id=${req.body.user_id}) as s2;`;
+router.get('/:user_id', async (req, res) => {
+    const getRestUsersSql = `select distinct gu2.user_id as checking_with_user from UserGroupInfo gu1 join UserGroupInfo gu2 on gu1.user_id <> gu2.user_id and gu1.group_id = gu2.group_id where gu1.user_id = ${req.params.user_id};`;
+    const balancesSql = `CALL get_balances('${req.params.user_id}', ? )`;
     const balances = [];
-    console.log("inside get")
+
     sql2.query(getRestUsersSql)
         .then((rows) => {
-            const promiseList = rows[0].map((row) => new Promise((resolve, reject) => sql2.query(balancesSql, [row.owed_id, row.owed_id])
+            const promiseList = rows[0].map((row) => new Promise((resolve, reject) => sql2.query(balancesSql, row.checking_with_user)
                 .then((subRows) => {
-                    subRows[0].map((subRow) => {
-                        console.log(row.owed_id);
+                    subRows[0][0].map((subRow) => {
                         const balance = {
-                            user1: req.body.user_id,
-                            user2: row.owed_id,
-                            net_amt: subRow.net_amount,
+                            user1: subRow.logged_in_user,
+                            user1_name: subRow.logged_in_user_name,
+                            user2: subRow.checking_with_user,
+                            user2_name: subRow.checking_with_user_name,
+                            net_amt: subRow.net_amt,
+                            collect_or_pay: subRow.collect_or_pay,
                         };
                         balances.push(balance);
                     });
