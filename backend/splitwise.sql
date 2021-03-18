@@ -191,16 +191,19 @@ CREATE TABLE UserBillSplit(
 DROP PROCEDURE IF EXISTS `AddUserBill`;
 DELIMITER ;;
 CREATE PROCEDURE AddUserBill (
-    in_group_id INT,
+    in_group_name VARCHAR(50) ,
     in_bill_name VARCHAR(255),
     in_bill_paid_by INT,
     in_bill_amount DOUBLE
 )
 BEGIN
     DECLARE _bill_id INT;
+    DECLARE _group_id BIGINT;
+
+    SELECT group_id INTO _group_id from GroupInfo where group_name = in_group_name;
 
     INSERT INTO UserBillDetails (group_id, bill_details, bill_paid_by, bill_amount, bill_add_time) 
-    VALUES (in_group_id,in_bill_name,in_bill_paid_by,in_bill_amount,NOW());
+    VALUES (_group_id,in_bill_name,in_bill_paid_by,in_bill_amount,NOW());
 
     SELECT max(bill_id) INTO _bill_id FROM UserBillDetails WHERE bill_details = in_bill_name;
 

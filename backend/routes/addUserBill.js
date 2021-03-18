@@ -3,7 +3,7 @@ var router = express.Router();
 var sql = require('../sql')
 
 router.post("/", function(req,res) {
-    let addBill = `CALL AddUserBill('${req.body.groupId}','${req.body.billName}','${req.body.billPaidBy}','${req.body.billAmount}')`
+    let addBill = `CALL AddUserBill('${req.body.groupName}','${req.body.billName}','${req.body.billPaidBy}','${req.body.billAmount}')`
 
     sql.query(addBill, (err,result) => {
         if(err){
