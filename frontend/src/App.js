@@ -13,13 +13,14 @@ import Dashboard from "./components/dashboard/dashboard";
 import CreateGroups from "./components/groups/createGroups"
 import MyGroups from "./components/groups/mygroups"
 import MyGroupsDashboard from "./components/groups/mygroupsdasboard"
-// import Member from "./components/groups/addMembers"
+import RecentActivity from "./components/activity/recentActivity.jsx"
 
 import { logout } from "./actions/auth";
 import { clearMessage } from "./actions/message";
 
 import { history } from "./helpers/history";
 import { Component } from "react";
+
 
 class App extends Component {
   constructor(props) {
@@ -162,6 +163,7 @@ class App extends Component {
             <Route exact path="/groups" component={CreateGroups} />
             <Route exact path="/groupdetails" component={MyGroups} />
             <Route exact path="/myGroups" component={MyGroupsDashboard} />
+            <Route exact path="/recent" component={RecentActivity} />
           </Switch>
         </div>
       </Router>

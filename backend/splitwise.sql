@@ -287,3 +287,48 @@ BEGIN
 END ;;
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `recentActivity`;
+DELIMITER ;;
+CREATE PROCEDURE `recentActivity`(
+    in_user_id BIGINT
+)
+BEGIN
+    SELECT 
+        b.bill_id, 
+        b.bill_details,
+        b.bill_amount, 
+        g.group_name, 
+        b.bill_paid_by, 
+        paid_by.name as paid_by_name,
+        gu.user_id,
+        u.name,
+        CASE 
+            WHEN gu.user_id = b.bill_paid_by 
+            THEN 'GET' 
+            ELSE 'PAY' 
+        END AS pay_get, 
+        CASE 
+            WHEN gu.user_id = b.bill_paid_by 
+            THEN (b.bill_amount / gu_count.no_of_users) *  (gu_count.no_of_users - 1)
+            ELSE (b.bill_amount / (gu_count.no_of_users))
+        END AS split_amount,
+        b.bill_add_time
+    FROM UserBillDetails b
+    LEFT JOIN GroupInfo g ON b.group_id = g.group_id
+    LEFT JOIN UserGroupInfo gu ON b.group_id = gu.group_id
+    LEFT JOIN UserDetails u ON gu.user_id = u.user_id 
+    LEFT JOIN (
+        SELECT count(user_id) AS no_of_users,
+                group_id
+        FROM UserGroupInfo gu
+        GROUP BY group_id
+    ) gu_count ON b.group_id = gu_count.group_id
+    LEFT JOIN (
+        SELECT DISTINCT b.bill_paid_by, 
+                u.name 
+        FROM UserDetails u JOIN UserBillDetails b ON u.user_id = b.bill_paid_by
+    ) paid_by ON b.bill_paid_by = paid_by.bill_paid_by
+    WHERE u.user_id = in_user_id
+    ORDER BY b.bill_add_time DESC ;
+END ;;
+DELIMITER ;

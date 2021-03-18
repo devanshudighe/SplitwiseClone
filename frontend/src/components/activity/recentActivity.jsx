@@ -3,42 +3,38 @@ import { Row, Form, Col, Container, Card } from 'react-bootstrap';
 import { Button, ListGroup } from 'react-bootstrap';
 import axios from 'axios'
 import localhost from "../../config.js"
-import GroupDetailCard from "./groupDetailCard.jsx";
+import RecentActivityDetailCard from "./recentActivityDetails.jsx";
 
-export default class MyGroups extends Component {
+export default class RecentActivity extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            groupName : this.props.location.state.group_name,
-            groupDetails : []
+            activity : []
         };
-        this.getGroupDetails();
+        this.getRecentActivity();
     }
 
-    
-
-    getGroupDetails = () => {
+    getRecentActivity = () => {
         const userId = JSON.parse(localStorage.getItem('user')).userId
-        console.log(userId)
-        console.log(`${localhost}/groupdetails/user_id/${userId}/group_name/${this.props.location.state.group_name}`)
-        axios.get(`${localhost}/groupdetails/user_id/${userId}/group_name/${this.props.location.state.group_name}`)
+        axios.get(`${localhost}/recent/${userId}`)
         .then((response) => {
-            console.log(response)
             if(response.data[0]){
                 this.setState({
-                    groupDetails : response.data,
+                    activity : response.data,
                 })
             }
         }).catch((err) => {
             console.log(err)
         })
-    }    
+    }
+
     render() {
         const groupElements = []
-        if (this.state && this.state.groupDetails && this.state.groupDetails.length > 0) {
-            this.state.groupDetails.map((groupDetail) => {
+        if (this.state && this.state.activity && this.state.activity.length > 0) {
+            this.state.activity.map((recentActivity) => {
+                console.log(recentActivity)
                 const groupElement = (
-                  <ListGroup.Item><GroupDetailCard groupDetail = {groupDetail}/></ListGroup.Item>
+                  <ListGroup.Item><RecentActivityDetailCard recentActivity = {recentActivity}/></ListGroup.Item>
                 );
                 groupElements.push(groupElement);
               });          
@@ -47,7 +43,7 @@ export default class MyGroups extends Component {
             <Container className="mt-3" >
                 <Row>
                     <Col md={{ offset: 3, span: 4 }}>
-                        <h1>{this.state.groupName}</h1>
+                        <h1>Recent Activity</h1>
                     </Col>
                 </Row>
                 <Row>

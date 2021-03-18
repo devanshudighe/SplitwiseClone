@@ -5,8 +5,8 @@ var router = express.Router();
 var sql = require('../sql')
 
 
-router.get("/", function(req,res){
-    let recentActivity = `CALL recentActivity('${req.body.userId}')`
+router.get("/:userId", function(req,res){
+    let recentActivity = `CALL recentActivity('${req.params.userId}')`
 
     sql.query(recentActivity, (err,result) => {
         if(err){
@@ -21,9 +21,9 @@ router.get("/", function(req,res){
                 'Content-Type': 'text/plain'
                 });
             // console.log(result[0])
-            res.end("Descending" + JSON.stringify(result[0]))
+            res.end(JSON.stringify(result[0]))
 
-            console.log("Ascending" + JSON.stringify(result[0].reverse()))
+            // console.log("Ascending" + JSON.stringify(result[0].reverse()))
 
         }
         else{
