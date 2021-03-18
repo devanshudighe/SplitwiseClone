@@ -7,7 +7,7 @@ export default class GroupDetailCard extends Component {
       const { groupDetail } = this.props;
       return (
         <Row>
-          <Col md={2}><Moment format="MMM DD">{groupDetail.bill_created_at}</Moment></Col>
+          <Col md={2}><Moment format="MMM DD">{groupDetail.bill_add_time}</Moment></Col>
           <Col md={6}>{groupDetail.bill_name}</Col>
           <Col md={2}>
             <Row>
