@@ -21,18 +21,8 @@ const useruploads = multer({
     limits: { fileSize: 1000000 },
 }).single("image");
 
-router.get('/', (req, res) => {
-    let getImage = `select imageInfo from UserDetails WHERE user_id = ${req.body.user_id}`;
-    sql.query(getImage, (err, result) => {
-        if (err) {
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            });
-            res.end("Database Error");
-        }
-        if(result){
-            console.log(result[0])
-            var image = path.join(__dirname, '..') + '\\images\\' + result[0].imageInfo;
+router.get('/:userImage', (req, res) => {
+            var image = path.join(__dirname, '..') + '/images/' + req.params.userImage;
             // console.log(image)
             if (fs.existsSync(image)) {
                 // res.set('Content-Type', 'image/jpg')
@@ -40,10 +30,8 @@ router.get('/', (req, res) => {
                 // res.sendFile(image);
             }
             else {
-                res.sendFile(path.join(__dirname, '..') + '\\images\\userplaceholder.png')
+                res.sendFile(path.join(__dirname, '..') + '/images/userplaceholder.png')
             }
-        }
-    });
 });    
 
 

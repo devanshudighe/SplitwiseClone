@@ -25,7 +25,7 @@ DELIMITER ;
 /* Update User Profile*/
 DROP PROCEDURE IF EXISTS `updateUserInfo`;
 DELIMITER ;;
-CREATE PROCEDURE `updateUserInfo` (userId bigint, uName varchar(50), uEmail varchar(50),  uCurrency varchar(50), uLanguage varchar(50),uPhone bigint, uTimezone varchar(50))
+CREATE PROCEDURE `updateUserInfo` (userId bigint, uName varchar(50), uEmail varchar(50),  uCurrency varchar(50), uLanguage varchar(50),uPhone bigint, uTimezone varchar(50), uImage varchar(255))
 BEGIN
 UPDATE UserDetails
 SET 
@@ -34,9 +34,11 @@ SET
     phone = uPhone,
     currency = uCurrency,
     language = uLanguage,
-    Timezone = uTimezone
+    Timezone = uTimezone,
+    imageInfo = uImage
 WHERE user_id = userId;
-
+-- COMMIT ;
+-- SELECT imageInfo from UserDetails WHERE user_id = userId ;
 END;;
 DELIMITER ;
 -------------------------------------------------------------------------------------
@@ -45,7 +47,7 @@ DROP PROCEDURE IF EXISTS `getUpdatedUserInfo`;
 DELIMITER ;;
 CREATE PROCEDURE `getUpdatedUserInfo` (userId bigint)
 BEGIN
-SELECT user_id,name,email,password,phone,currency,language,Timezone
+SELECT user_id,name,email,password,phone,currency,language,Timezone,imageInfo
 FROM UserDetails 
 WHERE userId = user_id;
 END;;
@@ -392,3 +394,6 @@ BEGIN
     final2.net_amt;
 END ;;
 DELIMITER ;
+-----------------------------------------------------------------------------
+ALTER TABLE UserDetails 
+ADD image varchar(255);

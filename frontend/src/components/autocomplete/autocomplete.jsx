@@ -1,7 +1,7 @@
 import { Dropdown } from 'react-bootstrap';
 import React from 'react';
 import Autosuggest from 'react-autosuggest';
-import theme from './theme.css'
+// import theme from './theme.css'
 // import DropdownItem from 'react-bootstrap/esm/DropdownItem';
 
 export default class Autocomplete extends React.Component {
@@ -24,25 +24,27 @@ export default class Autocomplete extends React.Component {
         const inputValue = value.trim().toLowerCase();
         const inputLength = inputValue.length;
         // console.log(this.props)
-        console.log(this.state.names)
+        // console.log(this.state.names)
         return inputLength === 0 ? [] : this.state.names.filter(p_name =>
             p_name.toLowerCase().slice(0, inputLength) === inputValue
         );
     };
     onChange = (event, { newValue }) => {
         this.setState({
-            value: newValue
+            value: newValue,
         });
+        
     };
 
     // Autosuggest will call this function every time you need to update suggestions.
     // You already implemented this logic above, so just use it.
     onSuggestionsFetchRequested = ({ value }) => {
-        console.log(this.getSuggestions(value))
+        // console.log(this.getSuggestions(value))
         this.setState({
             suggestions: this.getSuggestions(value),
             
         });
+        this.props.onAutocomplete(this.getSuggestions(value));
     };
 
     // Autosuggest will call this function every time you need to clear suggestions.
@@ -71,7 +73,7 @@ export default class Autocomplete extends React.Component {
         </span>
       );
     render(){
-        console.log(this.props)
+        // console.log(this.props)
         const { value, suggestions } = this.state;
 
         // Autosuggest will pass through all these props to the input.
@@ -90,6 +92,7 @@ export default class Autocomplete extends React.Component {
                 getSuggestionValue={this.getSuggestionValue}
                 renderSuggestion={this.renderSuggestion}
                 inputProps={inputProps}
+                
                 
             />
         );

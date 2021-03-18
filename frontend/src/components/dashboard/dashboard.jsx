@@ -57,14 +57,25 @@ export default class Dashboard extends Component {
       [e.target.name] : e.target.value
     });
   }
+
+  onAc = (value) => {
+    this.setState({
+      name : value,
+    });
+    
+  }
+
+
   render() {
     const dashboardElements = []
     let totalBalances = 0;
     let collectBalance = [];
     let payBalance = [];
     let payNames = [];
+    
 
     if (this.state && this.state.dashboard && this.state.dashboard.length > 0) {
+      // console.log(this.state.dashboard)
       this.state.dashboard.map((dash) => {
         if (dash.collect_or_pay === "COLLECT") {
           collectBalance.push(dash.net_amt);
@@ -74,17 +85,22 @@ export default class Dashboard extends Component {
           payBalance.push(dash.net_amt);
           payNames.push(dash.user2_name);
         }
+        // console.log(this.state.name)
+        
         const dashboard = (
           <DashboardCard dashboard={dash} />
         );
         dashboardElements.push(dashboard);
       });
     }
+
+    
+
     totalBalances += collectBalance.reduce((a, b) => a + b, 0);
     totalBalances -= payBalance.reduce((a, b) => a + b, 0);
     payBalance = payBalance.reduce((a, b) => a + b, 0);
     collectBalance = collectBalance.reduce((a, b) => a + b, 0);
-    console.log(payNames)
+
 
 
     
@@ -106,12 +122,13 @@ export default class Dashboard extends Component {
                     <Form.Label style={{ display: 'flex', justifyContent: 'flex-end' }}>You Paid: </Form.Label>
                   </Form.Group>
                   <Form.Group as={Col} md={4}>
-                      <Autocomplete names = {payNames}/>
+                      <Autocomplete names = {payNames} onAutocomplete = {this.onAc}/>
+                      
                   </Form.Group>
                 </Row>
                 <Row>
                   <Form.Group as={Col} md={{ span: '3', offset: '4'}}>
-                    <Form.Control type="text" />
+                    <Form.Control type="text" value = {this.amount} disabled />
                   </Form.Group>
                 </Row>
                 

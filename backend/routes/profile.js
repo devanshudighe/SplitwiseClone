@@ -1,7 +1,32 @@
 var express = require('express');
 var router = express.Router();
 var sql = require('../sql');
+var multer  = require('multer');
+const path = require('path');
 
+var storage = multer.diskStorage({
+    destination: path.join(__dirname, '..') + '\\images\\',
+    filename: function (req, file, cb) {
+      cb(null, Date.now()+file.originalname)
+    }
+  });
+
+  const fileFilter=(req, file, cb)=>{
+   if(file.mimetype ==='image/jpeg' || file.mimetype ==='image/jpg' || file.mimetype ==='image/png'){
+       cb(null,true);
+   }else{
+       cb(null, false);
+   }
+
+  }
+
+var upload = multer({ 
+    storage:storage,
+    limits:{
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter:fileFilter
+ });
 
 router.get('/:user_id', function (req, res) {
     // const userId = localStorage.getItem('userId');
@@ -16,6 +41,7 @@ router.get('/:user_id', function (req, res) {
             res.end("Database Error");
         }
         if (result && result[0].length > 0) {
+            console.log(result[0][0])
             let user = {
                 userId: result[0][0].user_id,
                 user_name: result[0][0].name,
@@ -23,7 +49,8 @@ router.get('/:user_id', function (req, res) {
                 currency: result[0][0].currency,
                 language: result[0][0].language,
                 phone: result[0][0].phone,
-                timeZone: result[0][0].Timezone
+                timeZone: result[0][0].Timezone,
+                image : result[0][0].imageInfo
             }
             res.writeHead(200, {
                 'Content-type':'application/json',
@@ -40,12 +67,15 @@ router.get('/:user_id', function (req, res) {
     })
 });
 
-router.post('/', async function (req, res) {
+router.post('/',upload.single('image'), async function (req, res) {
     // const userId = localStorage.getItem('userId');
 
     // console.log(req.body)
-    let updatedUserDetails = `CALL updateUserInfo('${req.body.userId}','${req.body.name}','${req.body.email}','${req.body.currency}','${req.body.language}','${req.body.phone}','${req.body.timeZone}');`
-
+    let updatedUserDetails = `CALL updateUserInfo('${req.body.userId}','${req.body.name}','${req.body.email}','${req.body.currency}','${req.body.language}','${req.body.phone}','${req.body.timeZone}','${req.file.filename}');`
+    console.log(updatedUserDetails)
+    var profilePic = req.file.filename;
+    // console.log("Profile pic")
+    // console.log(req.file.path)
     sql.query(updatedUserDetails, (err, result) => {
         if (err) {
             res.writeHead(500, {
@@ -54,8 +84,16 @@ router.post('/', async function (req, res) {
             res.end(JSON.stringify({message : err}));
         }
         console.log(result)
+        // console.log(result[0][0].imageInfo)
+        // result[0][0].imageInfo = profilePic ? profilePic : result[0][0].image
         if (result.affectedRows > 0) {
-            res.status(200).end("Profile Updated")
+            
+            const returnObj = {
+                image : profilePic,
+                message : "Profile Updated"
+            }
+            console.log(returnObj)
+            res.status(200).end(JSON.stringify(returnObj));
         }
         else {
             console.log("Error")

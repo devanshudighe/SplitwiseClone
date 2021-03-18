@@ -17,7 +17,7 @@ class Profile extends Component {
     const user = JSON.parse(localStorage.getItem('user'))
     axios.get(`${localhost}/profile/${user.userId}`)
     .then(res => {
-      // console.log(res);
+      console.log(res);
       // this.setState({ profile : res.data });
       this.setState({ userId: res.data.user_id });
       this.setState({ email: res.data.email });
@@ -26,15 +26,20 @@ class Profile extends Component {
       this.setState({ timeZone: res.data.timeZone });
       this.setState({ phone: res.data.phone });
       this.setState({ currency: res.data.currency });
-      // this.setState({ currency: res.data.image });
+      this.setState({ image: res.data.imageInfo });
       // this.setState({ profileImage: res.data.results[0].profileImage })
+    },  () => {
+      localStorage.getItem('userImage')
     })
       .catch(err => console.log(err))
   }
-  // changeProfileImage = (event) => {
+  changeProfileImage = (event) => {
 
-  //   this.setState({ uploadedFile: event.target.files[0] });
-  // }
+    this.setState({ 
+      uploadedFile: event.target.files[0] 
+    });
+    // console.log(this.state.uploadedFile)
+  }
 
   onChangeFields = (e) => {
     this.setState({
@@ -45,25 +50,31 @@ class Profile extends Component {
   UpdateProfileHandler = (e) => {
     e.preventDefault();
     //create object of form data
-    // const formData = new FormData();
-    // // formData.append("profileImage",this.state.uploadedFile);
-    // formData.append("user_id", this.state.user_id);
-    // formData.append("name",this.state.user_name);
-    // formData.append("email",this.state.email);
-    // formData.append("phone",this.state.phone);
-    // formData.append("language",this.state.language);
-    // formData.append("currency",this.state.currency);
-    // formData.append("timezone",this.state.timeZone);
+    const formData = new FormData();
+    const user = JSON.parse(localStorage.getItem('user')).userId;
+    formData.append("image",this.state.uploadedFile);
+    console.log(user)
+    formData.append("userId", user);
+    formData.append("name",this.state.name);
+    formData.append("email",this.state.email);
+    formData.append("phone",this.state.phone);
+    formData.append("language",this.state.language);
+    formData.append("currency",this.state.currency);
+    formData.append("timeZone",this.state.timeZone);
 
-    const data = { ...this.state }
-    const user = JSON.parse(localStorage.getItem('user'));
-    data.userId = user.userId;
+    // const data = { ...this.state }
+    
+    // data.userId = user.userId;
     //update-profile
-    axios.post(`${localhost}/profile`, data).then(res => {
+    axios.post(`${localhost}/profile`, formData).then(res => {
       // console.log(data)
       console.log(res);
       this.setState({
-        message: res.data
+        message: res.data.message,
+        image:res.data.image,
+        ...this.fetchUserDetails()
+      }, () => {
+        localStorage.setItem('userImage',this.state.image)
       });
       // this.setState({ userId : res.data.results.userId})
       // this.setState({ name: res.data.results.user_name });
@@ -82,12 +93,22 @@ class Profile extends Component {
   // }
 
   render() {
-    if(this.state.message === 'Profile Updated'){
+    if(this.state.message && this.state.image){
+
       const user = JSON.parse(localStorage.getItem('user'))
+      console.log(user)
       user.user_name = this.state.name
       user.timeZone = this.state.timeZone
       localStorage.setItem('user',JSON.stringify(user))
-      return <Redirect to="/dashboard" />;
+
+      
+      var profilePic = `${localhost}/upload/${localStorage.getItem('userImage')}`;
+
+      // return <Redirect to="/dashboard" />;
+    }
+    else{
+      profilePic = `${localhost}/upload/${localStorage.getItem('userImage')}`;
+      // console.log()
     }
     if(!localStorage.getItem('user')){
       return <Redirect to="/home" />;
@@ -110,10 +131,10 @@ class Profile extends Component {
                   width={200}
                   height={200}
                   className="mr-2"
-                  src= {default_pic}
+                  src= {profilePic}
                   alt="Generic placeholder"
                 />
-                <Form.Control type="file" name="profileImage" onChange={this.onChangeFields} />
+                <Form.Control type="file" name="profileImage" onChange={this.changeProfileImage} />
             </Form.Group>
             {/* <Button variant="primary" onClick={this.UpdateProfileHandler}>Save</Button> */}
           </Col>
