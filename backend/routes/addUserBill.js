@@ -7,11 +7,13 @@ router.post("/", function(req,res) {
 
     sql.query(addBill, (err,result) => {
         if(err){
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            });
-            res.end("Database Error");
+            // res.writeHead(500, {
+            //     'Content-Type': 'text/plain'
+            // });
+            // res.end("Database Error");
+            console.log(err)
         }
+        console.log(result)
         if (result && result.length > 0) {
             res.writeHead(200, {
                 'Content-Type': 'text/plain'

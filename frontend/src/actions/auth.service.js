@@ -17,8 +17,9 @@ const login = (email, password) => {
       password,
     })
     .then((response) => {
-      console.log(response)
+      
       if (response.data) {
+        console.log("Auth.service" + JSON.stringify(response.data));
         localStorage.setItem("user",JSON.stringify(response.data));
         // localStorage.setItem("userId", JSON.stringify(response.data.userId));
       }

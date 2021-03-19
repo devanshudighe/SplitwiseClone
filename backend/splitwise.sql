@@ -4,7 +4,7 @@ DROP Procedure if EXISTS  `getUserInfo`;
 DELIMITER ;;
 CREATE PROCEDURE `getUserInfo` (_email varchar(50))
 BEGIN
-SELECT user_id,name,email,password,phone,currency,language,timeZone  FROM UserDetails WHERE email = _email;
+SELECT user_id,name,email,password,phone,currency,language,timeZone,imageInfo  FROM UserDetails WHERE email = _email;
 END;;
 DELIMITER ;
 -------------------------------------------------------------------------------------
@@ -206,11 +206,12 @@ BEGIN
 
     SELECT max(bill_id) INTO _bill_id FROM UserBillDetails WHERE bill_details = in_bill_name;
 
-    INSERT INTO UserBillSplit ( bill_id, user_id, owed_id, amount)
+    INSERT INTO UserBillSplit ( bill_id, user_id, owed_id, amount,settled)
     SELECT b.bill_id,
             b.bill_paid_by AS user_id,
             b1.owed_id AS owed_id,
-            (b.bill_amount / b2.no_of_users) AS amount
+            (b.bill_amount / b2.no_of_users) AS amount,
+            'N' as settled
     FROM UserBillDetails b 
     JOIN (
         SELECT count(gu.user_id) AS no_of_users, 
@@ -395,5 +396,56 @@ BEGIN
 END ;;
 DELIMITER ;
 -----------------------------------------------------------------------------
-ALTER TABLE UserDetails 
-ADD image varchar(255);
+DROP PROCEDURE IF EXISTS `settle_up`;
+DELIMITER ;;
+CREATE PROCEDURE `settle_up` (
+    in_user_id INT,
+    in_owed_name VARCHAR(255),
+    in_settle_amount DOUBLE
+)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE _bill_id, _user_id, in_owed_id, _owed_id INT;
+
+    DECLARE c1 CURSOR FOR (
+        SELECT final.bill_id, final.user_id, final.owed_id FROM (
+            (SELECT
+                bt.bill_id,
+                bt.user_id,
+                bt.owed_id
+                FROM UserBillSplit bt
+                WHERE bt.user_id=in_user_id AND bt.owed_id=in_owed_id)
+            UNION ALL
+            (SELECT
+                bt.bill_id,
+                bt.user_id,
+                bt.owed_id
+            FROM UserBillSplit bt
+            WHERE bt.user_id=in_owed_id AND bt.owed_id=in_user_id) 
+        ) AS final
+    );
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    SELECT u.user_id INTO in_owed_id FROM UserDetails u WHERE u.name = in_owed_name; 
+    
+    INSERT INTO UserBillSplit (bill_id, user_id, owed_id, amount) VALUES (-1, in_user_id, in_owed_id, in_settle_amount);
+
+    OPEN c1;
+
+    read_loop: LOOP
+        FETCH c1 INTO _bill_id, _user_id, _owed_id;
+        IF done THEN
+            SELECT "SETTLED_UP" as flag;
+            LEAVE read_loop;
+        END IF;
+        UPDATE UserBillSplit
+        SET settled='Y'
+        WHERE user_id=_user_id AND owed_id=_owed_id AND bill_id=_bill_id;
+    END LOOP;
+    
+    CLOSE c1;
+
+END ;;
+DELIMITER ;
+----------------------------------------------------------------------------

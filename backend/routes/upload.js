@@ -22,8 +22,9 @@ const useruploads = multer({
 }).single("image");
 
 router.get('/:userImage', (req, res) => {
-            var image = path.join(__dirname, '..') + '/images/' + req.params.userImage;
-            // console.log(image)
+            var image = path.join(__dirname, '..') + '\\images\\' + req.params.userImage;
+            console.log(image)
+
             if (fs.existsSync(image)) {
                 // res.set('Content-Type', 'image/jpg')
                 res.sendFile(image)

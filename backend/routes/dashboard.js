@@ -44,8 +44,8 @@ router.get('/:user_id', async (req, res) => {
 
 
 router.post("/", function(req,res){
-    let settleUp = `INSERT INTO UserBillSplit(bill_id,user_id,owed_id,amount) VALUES(-1,'${req.body.userId}','${req.body.owedId}','${req.body.amount}')`
-
+    let settleUp = `CALL settle_up('${req.body.userId}','${req.body.owedName}','${req.body.amount}')`
+    console.log(settleUp)
     sql.query(settleUp, (err,result) => {
         if(err){
             res.writeHead(500, {
@@ -53,7 +53,8 @@ router.post("/", function(req,res){
             });
             res.end("Database Error");
         }
-        if (result && result.affectedRows > 0) {
+        console.log(result)
+        if (result[0][0].flag === "SETTLED_UP") {
             res.writeHead(200, {
                 'Content-Type': 'text/plain'
                 });

@@ -64,7 +64,20 @@ export default class Dashboard extends Component {
     });
     
   }
-
+  sendExpenses = () => {
+    const userId = JSON.parse(localStorage.getItem('user')).userId;
+    const data = {
+      userId : userId,
+      owedName : this.state.name,
+      amount : this.state.amount,
+    }
+    console.log(data)
+    axios.post(`${localhost}/dashboard/`,data)
+    .then((response) => {
+      console.log(response);
+      this.handleClose()
+    }).catch(err => console.log(err))
+  }
 
   render() {
     const dashboardElements = []
@@ -128,7 +141,7 @@ export default class Dashboard extends Component {
                 </Row>
                 <Row>
                   <Form.Group as={Col} md={{ span: '3', offset: '4'}}>
-                    <Form.Control type="text" value = {this.amount} disabled />
+                    <Form.Control type="text" name = "amount" onChange={this.onChangeFields} required />
                   </Form.Group>
                 </Row>
                 

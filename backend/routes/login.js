@@ -19,7 +19,7 @@ var sql = require('../sql')
 router.post('/', async function (req, res) {
         // console.log("Req Body : ", req.body);
         let userDetails = `CALL getUserInfo('${req.body.email}');`
-
+        console.log("Inside Login Post" + userDetails)
         sql.query(userDetails, (err,result) => {
             if (err) {
                 res.writeHead(500, {
@@ -37,7 +37,8 @@ router.post('/', async function (req, res) {
                         currency : result[0][0].currency,
                         language : result[0][0].language,
                         phone : result[0][0].phone,
-                        timeZone : result[0][0].timeZone
+                        timeZone : result[0][0].timeZone,
+                        image : result[0][0].imageInfo
                     }
                     console.log(user)
                     res.status(200).send(user)

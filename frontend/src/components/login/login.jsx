@@ -40,7 +40,7 @@ class Login extends Component {
   }
 
   onChangePassword(e) {
-    this.setState({
+    this.setState({ 
       password: e.target.value,
     });
   }
@@ -114,7 +114,7 @@ class Login extends Component {
                 <label>Email address</label>
                 <input
                   type="email"
-                  name='email'
+                  name="email"
                   value={this.state.email}
                   className="form-control"
                   onChange={this.onChangeEmail}
