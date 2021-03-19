@@ -17,18 +17,25 @@ export default class Invitation extends Component {
             userId: JSON.parse(localStorage.getItem('user')).userId,
             groupName: this.state.groupName,
         };
-    axios.post(`${localhost}/myGroups`, data)
+    axios.post(`${localhost}/myGroups/accept`, data)
             .then((response) => {
-                this.props.onAcceptInvite(this.props.invitations)
+                this.props.onAcceptInvite()
             }).catch((err) => {
                 alert(err.response.data)
                 // console.log(err);
             });
         }
 
-    // rejectInvite = () => {
-        
-    // }    
+    handleReject = () => {
+        const data = {
+            userId: JSON.parse(localStorage.getItem('user')).userId,
+            groupName: this.state.groupName,
+        }
+        axios.post(`${localhost}/myGroups/reject`,data)
+        .then((response) => {
+            this.props.onAcceptInvite()
+        })
+    }    
     render(){
         const name = JSON.parse(localStorage.getItem('user')).user_name
         return (
@@ -38,7 +45,7 @@ export default class Invitation extends Component {
                        {name}  invited you to join the group <b>{this.props.invitations.group_name}</b>
                     </Card.Text>
                     <Button onClick={this.handleClick}>Accept</Button>
-                    <Button onClick={this.handleClick} >Reject</Button>
+                    <Button onClick={this.handleReject} >Reject</Button>
                 </Card.Body>
             </Card>
         )

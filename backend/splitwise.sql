@@ -277,6 +277,7 @@ BEGIN
         SELECT count(user_id) AS no_of_users,
                 group_id
         FROM UserGroupInfo gu
+        WHERE gu.is_member = 'Y'
         GROUP BY group_id
     ) gu_count ON b.group_id = gu_count.group_id
     LEFT JOIN (
@@ -446,6 +447,97 @@ BEGIN
     
     CLOSE c1;
 
+END ;;
+DELIMITER ;
+----------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `Group_Member_Leave`;
+DELIMITER ;;
+CREATE PROCEDURE `Group_Member_Leave` (
+    in_user_id INT,
+    in_group_name VARCHAR(255)
+)
+sp: BEGIN
+    
+    DECLARE count_records INT;
+    DECLARE _settled VARCHAR(3);
+
+    SELECT COUNT(final2.settled) INTO count_records
+    FROM (
+        SELECT DISTINCT final.settled 
+        FROM (
+            SELECT 
+                bt.settled 
+            FROM UserBillSplit bt
+            JOIN UserBillDetails b ON bt.bill_id=b.bill_id
+            JOIN GroupInfo g ON b.group_id = g.group_id
+            WHERE g.group_name = in_group_name AND bt.user_id=in_user_id
+            UNION ALL 
+            SELECT 
+                bt.settled 
+            FROM UserBillSplit bt
+            JOIN UserBillDetails b ON bt.bill_id=b.bill_id
+            JOIN GroupInfo g ON b.group_id = g.group_id
+            WHERE g.group_name = in_group_name AND bt.owed_id=in_user_id
+        ) AS final
+    ) AS final2;
+
+
+    IF count_records > 1 THEN
+        SELECT 'NOT_SETTLED' AS flag;
+        LEAVE sp;
+    ELSE
+        SELECT final2.settled INTO _settled 
+        FROM (
+            SELECT DISTINCT final.settled 
+            FROM (
+                SELECT 
+                    bt.settled 
+                FROM UserBillSplit bt
+                JOIN UserBillDetails b ON bt.bill_id=b.bill_id
+                JOIN GroupInfo g ON b.group_id = g.group_id
+                WHERE g.group_name = in_group_name AND bt.user_id=in_user_id
+                UNION ALL 
+                SELECT 
+                    bt.settled 
+                FROM UserBillSplit bt
+                JOIN UserBillDetails b ON bt.bill_id=b.bill_id
+                JOIN GroupInfo g ON b.group_id = g.group_id
+                WHERE g.group_name = in_group_name AND bt.owed_id=in_user_id
+            ) AS final
+        ) AS final2;
+
+        IF _settled <> 'Y' THEN
+            SELECT 'NOT_SETTLED' AS flag;
+            LEAVE sp;
+        ELSE
+            UPDATE UserGroupInfo SET is_member = 'L' 
+            WHERE user_id = in_user_id 
+            AND group_id = (SELECT group_id 
+                            FROM GroupInfo 
+                            WHERE group_name = in_group_name);
+
+            SELECT 'ALL_BALANCE_SETTLED' AS flag;
+        END IF;
+    END IF;
+END ;;
+DELIMITER ;
+-------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `Group_Member_Invite_Reject`;
+DELIMITER ;;
+CREATE PROCEDURE `Group_Member_Invite_Reject` (
+    in_user_id INT,
+    in_group_name VARCHAR(255)
+)
+BEGIN
+    
+    UPDATE UserGroupInfo SET is_member = 'R' 
+    WHERE user_id = in_user_id 
+    AND group_id = (SELECT group_id 
+                    FROM GroupInfo 
+                    WHERE group_name = in_group_name);
+
+    SELECT 'INVITE_REJECTED' AS flag;
+    
 END ;;
 DELIMITER ;
 ----------------------------------------------------------------------------

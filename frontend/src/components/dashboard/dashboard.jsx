@@ -75,7 +75,10 @@ export default class Dashboard extends Component {
     axios.post(`${localhost}/dashboard/`,data)
     .then((response) => {
       console.log(response);
-      this.handleClose()
+      this.setState({
+        ...this.getDashboard()
+      })
+      this.handleClose();
     }).catch(err => console.log(err))
   }
 

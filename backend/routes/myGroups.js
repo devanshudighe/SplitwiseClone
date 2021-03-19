@@ -29,7 +29,7 @@ router.get('/:userId', function (req, res) {
         }
     })
 });
-router.post('/', function (req, res) {
+router.post('/accept', function (req, res) {
     let acceptInvite = `CALL groupInvitationAccepted('${req.body.userId}', '${req.body.groupName}')`
 
     sql.query(acceptInvite, (err, result) => {
@@ -45,6 +45,33 @@ router.post('/', function (req, res) {
                 });
             console.log(result[0])
             res.end('Invite Accepted')
+
+        }
+        else{
+            res.writeHead(401, {
+                'Content-Type': 'text/plain'
+                });
+            res.end('No_Data')
+        }
+    })
+});
+
+router.post('/reject', function (req, res) {
+    let rejectInvite = `CALL Group_Member_Invite_Reject('${req.body.userId}', '${req.body.groupName}')`
+
+    sql.query(rejectInvite, (err, result) => {
+        if (err) {
+            res.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            res.end("Database Error");
+        }
+        if (result && result.length > 0) {
+            res.writeHead(200, {
+                'Content-Type': 'text/plain'
+                });
+            console.log(result[0])
+            res.end('Invite Rejected')
 
         }
         else{

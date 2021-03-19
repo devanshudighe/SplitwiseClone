@@ -46,22 +46,34 @@ class MyGroupsDashboard extends Component {
                 }
             });
     };
-    onAcceptInvite = (in_invitations) => {
-        let acceptedInvites = this.state.allGroupInvitations;
-                console.log(acceptedInvites)
-                acceptedInvites = acceptedInvites.filter((acc) => acc.group_name !== in_invitations.group_name )
-                // console.log(acceptedInvites)
-                in_invitations.is_member = 'Y'
-                 
-                const acceptedGroups = [...this.state.allUserGroups,in_invitations]
+    onAcceptInvite = () => {
                 this.setState({
-                    allGroupInvitations : acceptedInvites,
+                    allGroupInvitations : [],
 
-                    allUserGroups : acceptedGroups
+                    allUserGroups : [],
+                    ...this.getInvitations(),
                     // inviteAccepted: response.data,
                 });
                 console.log(this.state.allGroupInvitations)
+            }
+    leavegroup = (e) => {
+        const data = {
+            userId : JSON.parse(localStorage.getItem('user')).userId,
+            groupName : e.target.id,
+        }
+        console.log(data)
+        axios.post(`${localhost}/groupdetails`,data)
+        .then((response) => {
+            console.log(response)
+            if(response.data[0].flag === "ALL_BALANCE_SETTLED"){
+                this.onAcceptInvite()
+            }
+            else{
+                alert("Settle up remaining balances")
+            }
+        })
     }
+    
     render() {
         // console.log(JSON.parse(name).user_name);
         let invitations = null;
@@ -88,6 +100,10 @@ class MyGroupsDashboard extends Component {
                                 <Link to={{ pathname: '/groupDetails', state: { group_name: groups.group_name } }}>
                                     <Button variant="link">Visit Group</Button>
                                 </Link>
+                                <Link>
+                                    <Button id = {groups.group_name} onClick = {this.leavegroup} variant = "danger">Leave group</Button>
+                                </Link>
+                                
                             </Card.Body>
                         </Card>
                     )

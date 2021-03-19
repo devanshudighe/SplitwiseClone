@@ -17,7 +17,7 @@ export default class GroupDetailCard extends Component {
                   {groupDetail.paid_by_name} paid
                   {/* {' '} */}
                 </Row>
-                <Row>{numeral(groupDetail.bill_amount).format('$ 0,0[.]00')}</Row>
+                <Row>{numeral(groupDetail.bill_amount).format('$0.00')}</Row>
               </Col>
             </Row>
           </Col>
@@ -37,7 +37,7 @@ export default class GroupDetailCard extends Component {
                     </p>
                   ) }
                 </Row>
-                <Row>{numeral(groupDetail.split_amount).format('$ 0,0[.]00')}</Row>
+                <Row>{numeral(groupDetail.split_amount).format('$0.00')}</Row>
               </Col>
             </Row>
           </Col>
