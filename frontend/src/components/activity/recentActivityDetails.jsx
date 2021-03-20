@@ -11,9 +11,9 @@ export default class RecentActivityDetailCard extends Component {
       console.log(timezone)
       return (
         <Row>
-            <Col md={2} style = {{ paddingRight : "5px"}}><Moment tz = {timezone} format="dddd" >{recentActivity.bill_add_time}</Moment></Col>
+            <Col md={2} style = {{ paddingRight : "5px"}}><Moment date = {Date.UTC(recentActivity.bill_add_time)} tz = {timezone} format="dddd" >{recentActivity.bill_add_time}</Moment></Col>
             <Col>
-                {recentActivity.paid_by_name} added {recentActivity.bill_details} in {recentActivity.group_name}
+                <b>{recentActivity.paid_by_name}</b> added "<b>{recentActivity.bill_details}</b>" in <b>{recentActivity.group_name}</b>
             </Col>
         </Row>
       );

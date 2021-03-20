@@ -7,32 +7,51 @@ export default class DashboardCard extends Component {
     
     render() {
         const { dashboard } = this.props;
-        
+        console.log(dashboard)
         return (
             <Row>
                 <Col>
                     <Row>
-                        YOU OWE
-                    </Row>
-                    <Row>
                         <ListGroup variant = "flush">
-                            <Row>
-                                { dashboard.net_amt !== 0 ? (
+                            <ListGroup.Item>
+                                <Row>
+                                { dashboard.net_amt !== 0  && dashboard.net_amt < 0 ? (
                                     dashboard.user2_name
                                 ) : (
-                                    "you are settled up"
+                                    ""
                                 )}
-                            </Row>
-                            <Row>
-                                you owe {numeral((Math.abs(dashboard.net_amt))).format('$0.00')}
-                            </Row>
+                                </Row>
+                                <Row>
+                                    you owe {numeral((Math.abs(dashboard.net_amt))).format('$0.00')}
+                                </Row>
+                            
+                                    
+                                
+                            </ListGroup.Item>
+                            
                             
                         </ListGroup>
                     </Row>
                     
                 </Col>
                 <Col>
-                    YOU ARE OWED
+                    <Row>
+                        <ListGroup variant = "flush">
+                            <ListGroup.Item>
+                                { dashboard.net_amt !== 0 && dashboard.net_amt > 0 ? (
+                                    
+                                    // <Row>
+                                    dashboard.user2_name + (numeral((Math.abs(dashboard.net_amt))).format('$0.00'))
+                                    
+                                ) : (
+                                    ""
+                                )}
+                            </ListGroup.Item>
+                            
+                            
+                        </ListGroup>
+                    </Row>
+                    
                 </Col>
             </Row>
         )

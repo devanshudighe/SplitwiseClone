@@ -8,18 +8,17 @@ SELECT user_id,name,email,password,phone,currency,language,timeZone,imageInfo  F
 END;;
 DELIMITER ;
 -------------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `storeUserInfo`;
 DELIMITER ;;
 CREATE PROCEDURE `storeUserInfo`(_email varchar(50), _name varchar(50), _password varchar(50))
 BEGIN
-IF NOT EXISTS(SELECT email from UserDetails WHERE email = _email)
-THEN
-INSERT INTO UserDetails (`name`, email, `password`)
-VALUES (_name, _email, _password);
-SELECT 1 as flag;
-ELSE
-SELECT 0 as flag;
-END IF;
-END;;
+    IF NOT EXISTS(SELECT email from UserDetails WHERE email = _email) THEN
+        INSERT INTO UserDetails (`name`, email, `password`, currency,language,timeZone,imageInfo) VALUES (_name, _email, _password,"USD","en","America/Los_Angeles","userPlaceholder.png") ;
+        SELECT 1 as flag ;
+    ELSE
+        SELECT 0 as flag ;
+    END IF ;
+END ;;
 DELIMITER ;
 -------------------------------------------------------------------------------------
 /* Update User Profile*/

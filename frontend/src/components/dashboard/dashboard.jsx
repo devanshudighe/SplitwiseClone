@@ -174,7 +174,7 @@ export default class Dashboard extends Component {
             <ListGroup.Item style={{ minWidth: "100%" }}>
               <Row>
                 you owe
-                      </Row>
+                    </Row>
               <Row>
                 {numeral(Math.abs(payBalance)).format('$0.00')}
               </Row>
@@ -187,9 +187,10 @@ export default class Dashboard extends Component {
                 {numeral(collectBalance).format('$0.00')}
               </Row>
             </ListGroup.Item>
-          </ListGroup>
+          </ListGroup>  
         </Row>
-        {dashboardElements}
+          {dashboardElements}
+        
 
       </Container>
     );
