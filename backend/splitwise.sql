@@ -25,7 +25,7 @@ DELIMITER ;
 /* Update User Profile*/
 DROP PROCEDURE IF EXISTS `updateUserInfo`;
 DELIMITER ;;
-CREATE PROCEDURE `updateUserInfo` (userId bigint, uName varchar(50), uEmail varchar(50),  uCurrency varchar(50), uLanguage varchar(50),uPhone bigint, uTimezone varchar(50), uImage varchar(255))
+CREATE PROCEDURE `updateUserInfo` (userId bigint, uName varchar(50), uEmail varchar(50),  uCurrency varchar(50), uLanguage varchar(50),uPhone bigint, uTimezone varchar(50))
 BEGIN
 UPDATE UserDetails
 SET 
@@ -34,8 +34,7 @@ SET
     phone = uPhone,
     currency = uCurrency,
     language = uLanguage,
-    Timezone = uTimezone,
-    imageInfo = uImage
+    Timezone = uTimezone
 WHERE user_id = userId;
 -- COMMIT ;
 -- SELECT imageInfo from UserDetails WHERE user_id = userId ;

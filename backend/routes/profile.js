@@ -71,9 +71,9 @@ router.post('/',upload.single('image'), async function (req, res) {
     // const userId = localStorage.getItem('userId');
 
     // console.log(req.body)
-    let updatedUserDetails = `CALL updateUserInfo('${req.body.userId}','${req.body.name}','${req.body.email}','${req.body.currency}','${req.body.language}','${req.body.phone}','${req.body.timeZone}','${req.file.filename}');`
+    let updatedUserDetails = `CALL updateUserInfo('${req.body.userId}','${req.body.name}','${req.body.email}','${req.body.currency}','${req.body.language}','${req.body.phone}','${req.body.timeZone}');`
     console.log(updatedUserDetails)
-    var profilePic = req.file.filename;
+    // var profilePic = req.file.filename;
     // console.log("Profile pic")
     // console.log(req.file.path)
     sql.query(updatedUserDetails, (err, result) => {
@@ -89,7 +89,7 @@ router.post('/',upload.single('image'), async function (req, res) {
         if (result.affectedRows > 0) {
             
             const returnObj = {
-                image : profilePic,
+                // image : profilePic,
                 message : "Profile Updated"
             }
             console.log(returnObj)

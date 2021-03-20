@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Row, Form, Col, Container, Card } from 'react-bootstrap';
+import { Row, Form, Col, Container, Card, Dropdown } from 'react-bootstrap';
 import { Button, ListGroup } from 'react-bootstrap';
 import axios from 'axios'
 import {Link} from 'react-router-dom'
 import localhost from "../../config.js"
 import Invitation from "./acceptInvitation.jsx";
+import SearchBars from "./searchBar.jsx";
 
 class MyGroupsDashboard extends Component {
     constructor(props) {
@@ -20,7 +21,6 @@ class MyGroupsDashboard extends Component {
         axios.get(`${localhost}/myGroups/${userId}`)
             .then(response => {
                 if (response.data[0]) {
-                    console.log(response.data)
                     response.data.map(invitations => {
                         console.log(invitations)
                         if (invitations.is_member === "N") {
@@ -33,7 +33,10 @@ class MyGroupsDashboard extends Component {
                             const list = [...this.state.allUserGroups, invitations]
                             // console.log(list)
                             this.setState({
-                                allUserGroups: list
+                                allUserGroups: list,
+                                res : list.map(l => 
+                                    l.group_name
+                                )
                             });
                         }
                     }
@@ -73,7 +76,17 @@ class MyGroupsDashboard extends Component {
             }
         })
     }
-    
+    onSearch = async (name) => {
+        console.log(name)
+        const list = this.state.allUserGroups.filter( (group) =>group.group_name.toLowerCase().includes(name.toLowerCase()))
+        console.log(list)
+        await this.setState({
+            res : list.map(l => 
+                l.group_name
+            )
+        })
+        console.log(this.state.res)
+    }
     render() {
         // console.log(JSON.parse(name).user_name);
         let invitations = null;
@@ -116,8 +129,21 @@ class MyGroupsDashboard extends Component {
                     <Col md={{ offset: 4, span: 4 }}>
                         <h1>My Groups</h1>
                     </Col>
+                    
                 </Row>
                 <Row>
+                    <Col md = {{span : "6"}}>
+                        <SearchBars groupNames={this.state.allUserGroups.map((group) => group.group_name)} onSearch={this.onSearch} />
+                    </Col>
+                    <Col>
+                        <Link to={{ pathname: '/groupDetails', state: { group_name: this.state.res } }}>
+                            <Button variant="primary">Visit Group</Button>
+                        </Link>
+                    </Col>
+                </Row>
+                
+                <Row>
+                    
                     <Col md={{ span: 3 }}>
                         <h3>Group Invitations</h3>
                         <Card style={{

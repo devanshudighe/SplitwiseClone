@@ -39,8 +39,9 @@ router.get('/:userImage', (req, res) => {
 router.post("/", (req, res) => {
     useruploads(req, res, function (err) {
         if (!err) {
-            console.log(req)
+            
             let imageSql = `UPDATE UserDetails SET imageInfo = '${req.file.filename}' WHERE user_id = ${req.body.userId}`;
+            console.log(imageSql)
             sql.query(imageSql, (err, result) => {
                 if (err) {
                     res.writeHead(500, {
