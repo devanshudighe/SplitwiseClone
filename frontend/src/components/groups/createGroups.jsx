@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
 import React, { Component } from "react";
-import { Container, Row, Form, Col } from 'react-bootstrap';
+import { Container, Row, Form, Col, Image } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
 import Members from "./addMembers"
 import axios from 'axios'
 import localhost from "../../config.js"
+
+// import { response } from '../../../../backend/app';
+import SearchBars from '../groups/searchBar'
 // import Form from "react-validation/build/form";
 
 
@@ -14,9 +17,56 @@ export default class CreateGroups extends Component {
         super(props);
         this.state = {
             invitationListSize: 1,
+            allUsers : [],
         };
+        this.getAllUsers();
     }
 
+
+    getAllUsers = async () => {
+        const userId = JSON.parse(localStorage.getItem('user')).userId;
+        await axios.get(`${localhost}/profile/users/${userId}`)
+        .then((response) => {
+            console.log(response)
+            this.setState({
+                allUsers : response.data,
+            })
+            console.log(this.state.allUsers);
+        })
+    }
+
+
+    
+
+
+    changeProfileImage = (event) => {
+
+        this.setState({
+          uploadedFile: event.target.files[0]
+        });
+      }
+      onUpload =  () => {
+        console.log(this.state.uploadedFile)
+        // const user = JSON.parse(localStorage.getItem('user')).userId;
+        const formData = new FormData();
+        // formData.append("groupName", this.state.groupName)
+        formData.append("image", this.state.uploadedFile)
+        const upload = {
+            headers : {
+                "content-type" : "multipart/form-data"
+            }
+        }
+        axios.post(`${localhost}/groupupload/${this.state.groupName}`, formData,upload)
+          .then((response) => {
+            console.log(response)
+            this.setState({
+              image : response.data,
+            })
+          }).catch((err) => {
+              console.log(err)
+          })
+        console.log(this.state.image)
+      }
     onChange = (e) => {
         this.setState({
             [e.target.name]: e.target.value,
@@ -44,45 +94,62 @@ export default class CreateGroups extends Component {
             });
     }
 
+    
+
     onAddInvitationForm = () => {
         // invitationListSize;
         this.setState((prevState) => ({ invitationListSize: prevState.invitationListSize + 1 }));
     }
     render() {
+        let profilePic  = null;
+        if(this.state) {
+        console.log(this.state.image)
+        profilePic = `${localhost}/groupupload/${this.state.image}`;
+        // console.log(JSON.stringify(localStorage.getItem('user')).image)
+        // return <Redirect to="/dashboard" />;
+        }
+        
         let loggedUser = null;
         const invitationForms = [];
         if (this.state.groupCreated === 'New Group Created') {
             loggedUser = (
                 <Form.Row>
                     <Form.Group as={Col} md="6">
+                        
+                        {/* <SearchBars users={this.state.allUsers.map((user) => user.name)} onSearch={this.onSearchName} /> */}
                         <Form.Control type="text" name="invite_name" placeholder={JSON.parse(localStorage.getItem('user')).user_name} onChange={this.onAddPersonName} disabled />
                     </Form.Group>
                     <Form.Group as={Col} md="6">
+                        
+                        {/* <SearchBars users={this.state.allUsers.map((user) => user.email)} onSearch={this.onSearchEmail} /> */}
                         <Form.Control type="email" name="invite_email" placeholder={JSON.parse(localStorage.getItem('user')).email} onChange={this.onAddPersonEmail} disabled />
                     </Form.Group>
                 </Form.Row>
             );
         }
         
+        
+        
 
         for (let i = 1; i <= this.state.invitationListSize; i += 1) {
-            invitationForms.push(<Members groupName={this.state.groupName} />);
+            invitationForms.push(<Members groupName={this.state.groupName} allUsers = {this.state.allUsers} />);
         }
         return (
             <Container className="mt-5">
                 <Row>
                     <Col md={{ offset: 2, span: 3 }}>
-                        <img
-                            className="img-fluid rounded float-right"
-                            // max-width="100%"
-                            // vertical-align="middle"
-                            // border="0"
-                            width={200}
-                            height={200}
-                            // className="mr-2"
-                            src="https://assets.splitwise.com/assets/core/logo-square-65a6124237868b1d2ce2f5db2ab0b7c777e2348b797626816400534116ae22d7.svg"
+                        <Image
+                            style={{ width: '17rem' }}
+                            src={profilePic}
                             alt="Generic placeholder"
                         />
+                        <Form onSubmit={this.onUpload}>
+                            <Form.Group as={Col} className="lg-3">
+                                <Form.Control type="file" name="image" onChange={this.changeProfileImage} />
+                                <br />
+                                <Button type="submit">Upload</Button>
+                            </Form.Group>
+                        </Form>
                     </Col>
                     <Col md={{ span: 4 }} >
                         <h2 style={{
@@ -94,7 +161,7 @@ export default class CreateGroups extends Component {
                         }}>
                             Start a new group
                         </h2>
-                        <Form className="form" style={{
+                        <Form onSubmit = {this.onCreate} className="form" style={{
                             margin: "0 0 18px"
                         }}>
                             <Form.Group controlId="formCategory2">
@@ -113,7 +180,7 @@ export default class CreateGroups extends Component {
                                     lineHeight: "140%",
                                     marginBottom: "17px"
                                 }} />
-                                <Button type="submit" className="btn btn-primary btn-md" onClick = {this.onCreate}>Create</Button>
+                                <Button type="submit" className="btn btn-primary btn-md">Create</Button>
                             </Form.Group>
                         </Form>
                         <h2 style={{

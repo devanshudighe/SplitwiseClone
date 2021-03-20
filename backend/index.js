@@ -5,6 +5,7 @@ var login = require('./routes/login');
 var signup = require('./routes/signup');
 var profile = require('./routes/profile');
 var upload = require('./routes/upload');
+var groupUpload = require('./routes/groupUpload');
 var groups = require('./routes/newGroups')
 var addMember = require('./routes/addMember')
 var myGroups = require('./routes/myGroups')
@@ -17,6 +18,7 @@ app.use('/login',login)
 app.use('/signup',signup)
 app.use('/profile',profile)
 app.use('/upload',upload)
+app.use('/groupupload',groupUpload)
 app.use('/groups',groups)
 app.use('/member',addMember)
 app.use('/myGroups',myGroups)

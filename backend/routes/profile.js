@@ -67,6 +67,41 @@ router.get('/:user_id', function (req, res) {
     })
 });
 
+router.get('/users/:user_id', function (req, res) {
+    // const userId = localStorage.getItem('userId');
+    // console.log('Inside Profile get request');
+    let userDetails = `SELECT name,email from UserDetails WHERE user_id <>'${req.params.user_id}';`
+    console.log(userDetails)
+    sql.query(userDetails, (err, result) => {
+        if (err) {
+            res.writeHead(500, {
+                'Content-Type': 'text/plain'
+            });
+            res.end("Database Error");
+        }
+        // console.log(result)
+        if (result && result.length > 0) {
+            // console.log(result[0][0])
+            // let user = {
+            //     user_name: result[0][0].name,
+            //     email: result[0][0].email,
+            // }
+            res.writeHead(200, {
+                'Content-type':'application/json',
+            })
+            console.log(JSON.stringify(result))
+            res.end(JSON.stringify(result));
+        }
+        // else {
+        //     res.writeHead(401, {
+        //         'Content-Type': 'text/plain'
+        //     })
+        //     res.end("NO_USER");
+        // }
+    })
+});
+
+
 router.post('/',upload.single('image'), async function (req, res) {
     // const userId = localStorage.getItem('userId');
 

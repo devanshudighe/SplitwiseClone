@@ -10,19 +10,19 @@ const fs = require('fs');
 //     // type : Buffer,
 //     dest: 'images'
 //     })
-const userstorage = multer.diskStorage({
-    destination: path.join(__dirname, '..') + '\\images\\',
+const groupstorage = multer.diskStorage({
+    destination: path.join(__dirname, '..') + '\\groupImages\\',
     filename: (req, file, cb) => {
-        cb(null, 'user' + req.body.userId + "-" + Date.now() + path.extname(file.originalname));
+        cb(null, 'group' + req.params.groupName + "-" + Date.now() + path.extname(file.originalname));
     }
 });
-const useruploads = multer({
-    storage: userstorage,
+const groupuploads = multer({
+    storage: groupstorage,
     limits: { fileSize: 1000000 },
 }).single("image");
 
-router.get('/:userImage', (req, res) => {
-            var image = path.join(__dirname, '..') + '\\images\\' + req.params.userImage;
+router.get('/:groupImage', (req, res) => {
+            var image = path.join(__dirname, '..') + '\\groupImages\\' + req.params.groupImage;
             console.log(image)
 
             if (fs.existsSync(image)) {
@@ -33,15 +33,14 @@ router.get('/:userImage', (req, res) => {
             else {
                 res.sendFile(path.join(__dirname, '..') + '/images/userplaceholder.png')
             }
-});    
+});  
 
 
-
-router.post("/", (req, res) => {
-    useruploads(req, res, function (err) {
+router.post("/:groupName", (req, res) => {
+    groupuploads(req, res, function (err) {
         if (!err) {
             
-            let imageSql = `UPDATE UserDetails SET imageInfo = '${req.file.filename}' WHERE user_id = ${req.body.userId}`;
+            let imageSql = `UPDATE GroupInfo SET group_image = '${req.file.filename}' WHERE group_name = '${req.params.groupName}'`;
             console.log(imageSql)
             sql.query(imageSql, (err, result) => {
                 if (err) {
@@ -54,6 +53,7 @@ router.post("/", (req, res) => {
             res.writeHead(200, {
                 'Content-Type': 'text/plain'
             });
+            
             res.end(req.file.filename);
         }
         else {
@@ -62,13 +62,5 @@ router.post("/", (req, res) => {
         }
     })
 });
-// router.post('/', upload.single('upload'), (req, res) => {
-//     var image = req.file.buffer
-//     image.save()
-//     res.send()
-//     console.log(res)
-//     }, (error, req, res, next) => {
-//     res.status(400).send({error: error.message})
-// })
 
 module.exports = router;
