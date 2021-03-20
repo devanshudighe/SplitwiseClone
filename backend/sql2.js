@@ -5,7 +5,8 @@ var con = mysql.createPool({
   user: "root",
   port : 3306,
   password: "devanshu",
-  database: "splitwise"
+  database: "splitwise",
+  // connectionLimit : 100
 });
 
 con.getConnection(function (err) {

@@ -10,7 +10,7 @@ class Home extends Component {
     const { user: currentUser } = this.props;
 
     if (!currentUser) {
-      return <Redirect to="/home" />;
+      return <Redirect to="/" />;
     }
     return (
       <div>  
