@@ -1,4 +1,4 @@
-# SPLITWISE using ReactJS, ExpressJS, NodeJS, MySQL
+# SPLITWISE using ReactJS, ExpressJS, NodeJS, MySQL 
 ## STEPS TO RUN THE APPLICATION
 
 1) Clone the repository "SplitwiseClone" and import the file "splitwise.sql" from **/backend** to a MySQL database. 
