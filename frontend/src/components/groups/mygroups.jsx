@@ -5,6 +5,7 @@ import axios from 'axios'
 import localhost from "../../config.js"
 import GroupDetailCard from "./groupDetailCard.jsx";
 import NavRight from "../navbar/navbarRight";
+import LeftNavbar from "../navbar/navbarLeft";
 
 export default class MyGroups extends Component {
     constructor(props) {
@@ -88,80 +89,84 @@ export default class MyGroups extends Component {
             });
         }
         return (
-            <div className="mt-4">
-                <Row>
-                    <Col md={{ span: 9 }}>
-                        <Row>
-                            <Col md={{ offset: 3, span: 4 }}>
-                                <h2>{this.state.groupName}</h2>
-                            </Col>
-                            <Col>
-                                <Button variant="warning" onClick={this.handleShow}>Add Expense</Button>{' '}
-                                <Modal show={this.state.show} onHide={this.handleClose}>
-                                    <Modal.Header closeButton>
-                                        <Modal.Title>Add an expense</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <ListGroup variant="flush">
-                                            <ListGroup.Item>With you and <b>{this.state.groupName}</b></ListGroup.Item>
-                                            <ListGroup.Item>
-                                                <Row md="pt-2">
-                                                    <Col md={{ span: "2", offset: "1" }}>
-                                                        <img alt="Default" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png" />
-                                                    </Col>
-                                                    <Col md={{ span: "2", offset: "3" }}>
-                                                        <Row>
-                                                            <input type="text" class="description" placeholder="Enter a description" name="billName" onChange={this.onChangeFields} />
-                                                        </Row>
-                                                        <Row>
-                                                            <input type="text" class="cost" placeholder="0.00" name="billAmount" onChange={this.onChangeFields} />
-                                                        </Row>
-                                                    </Col>
-                                                </Row>
-                                            </ListGroup.Item>
-                                        </ListGroup>
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button variant="secondary" onClick={this.handleClose}>
-                                            Close
+            <Row className="mt-4">
+                <Col md = "3">
+                    <Row className="mt-4"></Row>
+                    <Row className="mx-3">
+                        <LeftNavbar />
+                    </Row>
+                </Col>
+                <Col md="6">
+                    <Row>
+                        <Col md={{ offset: 3, span: 6 }}>
+                            <h2>{this.state.groupName}</h2>
+                        </Col>
+                        <Col style = {{justifyContent : "right"}}>
+                            <Button variant="warning" onClick={this.handleShow}>Add Expense</Button>{' '}
+                            <Modal show={this.state.show} onHide={this.handleClose}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Add an expense</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <ListGroup variant="flush">
+                                        <ListGroup.Item>With you and <b>{this.state.groupName}</b></ListGroup.Item>
+                                        <ListGroup.Item>
+                                            <Row md="pt-2">
+                                                <Col md={{ span: "2", offset: "1" }}>
+                                                    <img alt="Default" src="https://s3.amazonaws.com/splitwise/uploads/category/icon/square_v2/uncategorized/general@2x.png" />
+                                                </Col>
+                                                <Col md={{ span: "2", offset: "3" }}>
+                                                    <Row>
+                                                        <input type="text" class="description" placeholder="Enter a description" name="billName" onChange={this.onChangeFields} />
+                                                    </Row>
+                                                    <Row>
+                                                        <input type="text" class="cost" placeholder="0.00" name="billAmount" onChange={this.onChangeFields} />
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                        </ListGroup.Item>
+                                    </ListGroup>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="secondary" onClick={this.handleClose}>
+                                        Close
                                     </Button>
-                                        <Button variant="primary" onClick={this.sendExpenses}>
-                                            Save Changes
+                                    <Button variant="primary" onClick={this.sendExpenses}>
+                                        Save Changes
                                     </Button>
-                                    </Modal.Footer>
-                                </Modal>
-                            </Col>
-                        </Row>
+                                </Modal.Footer>
+                            </Modal>
+                        </Col>
+                    </Row>
+                    <Row>
                         <Row>
-                            <Row>
-                                <Row className="mt-1">
-                                    <Col md={{
-                                        span: "2",
-                                        offset: "1"
+                            <Row className="mt-1">
+                                <Col md={{
+                                    span: "2",
+                                    offset: "1"
+                                }}>
+                                </Col>
+                                <Col md={{
+                                    span: "6"
+                                }}>
+                                    <ListGroup variant='flush' style={{
+                                        width: "100%"
                                     }}>
-                                    </Col>
-                                    <Col md={{
-                                        span: "6"
-                                    }}>
-                                        <ListGroup variant='flush' style={{
-                                            width: "100%"
-                                        }}>
-                                            {groupElements}
-                                        </ListGroup>
-                                    </Col>
-                                    <Col md={{
-                                        span: "4"
-                                    }}>
-                                    </Col>
-                                </Row>
+                                        {groupElements}
+                                    </ListGroup>
+                                </Col>
+                                <Col md={{
+                                    span: "4"
+                                }}>
+                                </Col>
                             </Row>
                         </Row>
-                    </Col>
-                    <Col>
-                        <NavRight groupName={this.state.groupName} />
-                    </Col>
-                </Row>
-            </div>
+                    </Row>
+                </Col>
+                <Col md = "3">
+                    <NavRight groupName={this.state.groupName} />
+                </Col>
+            </Row>
         )
     }
 }

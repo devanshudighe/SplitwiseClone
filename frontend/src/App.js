@@ -97,7 +97,7 @@ class App extends Component {
             </Navbar.Brand>
             <Navbar.Toggle />
             
-            <Navbar.Collapse className="justify-content-end">
+            <Navbar.Collapse className="justify-content-end pr-5">
               <NavDropdown title={userObj.user_name} id="basic-nav-dropdown">
                 <NavDropdown.Item href = "/myGroups">My groups</NavDropdown.Item>
                 <NavDropdown.Item href="/profile">Your Account</NavDropdown.Item>
@@ -140,7 +140,7 @@ class App extends Component {
               />
           </Navbar.Brand>
             <Navbar.Toggle />
-            <Navbar.Collapse className="justify-content-end">
+            <Navbar.Collapse className="justify-content-end pr-3">
               <Nav.Link href="/login">Log in</Nav.Link>
               <Button href="/signup">Sign up</Button>
             </Navbar.Collapse>
@@ -155,7 +155,7 @@ class App extends Component {
         <div>
           {navbar}
           <Switch>
-            <Route exact path={["/","/home"]} component={Home} />
+            <Route exact path={["/"]} component={Home} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Register} />
             <Route exact path="/profile" component={Profile} />

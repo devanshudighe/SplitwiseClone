@@ -57,11 +57,13 @@ import {
       },
       (error) => {
         const message =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
+        error.response.data
+        console.log(error.response.data)
+          // (error.response &&
+          //   error.response.data &&
+          //   error.response.data.message) ||
+          // error.message ||
+          // error.toString();
   
         dispatch({
           type: LOGIN_FAIL,

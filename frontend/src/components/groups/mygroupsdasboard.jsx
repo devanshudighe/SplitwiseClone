@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import localhost from "../../config.js"
 import Invitation from "./acceptInvitation.jsx";
 import SearchBars from "./searchBar.jsx";
+import LeftNavbar from "../navbar/navbarLeft";
 
 class MyGroupsDashboard extends Component {
     constructor(props) {
@@ -124,48 +125,71 @@ class MyGroupsDashboard extends Component {
             });
         }
         return (
-            <Container className="mt-3" >
-                <Row>
-                    <Col md={{ offset: 4, span: 4 }}>
-                        <h1>My Groups</h1>
-                    </Col>
-                    
-                </Row>
-                <Row>
-                    <Col md = {{span : "6"}}>
-                        <SearchBars groupNames={this.state.allUserGroups.map((group) => group.group_name)} onSearch={this.onSearch} />
-                    </Col>
-                    <Col>
-                        <Link to={{ pathname: '/groupDetails', state: { group_name: this.state.res } }}>
-                            <Button variant="primary">Visit Group</Button>
-                        </Link>
-                    </Col>
-                </Row>
-                
-                <Row>
-                    
-                    <Col md={{ span: 3 }}>
-                        <h3>Group Invitations</h3>
-                        <Card style={{
-                            marginTop: "20px",
-                            width: '18rem'
-                        }}>
-                            {invitations}
-                        </Card>
-                    </Col>
-                    <Col md={{ offset: 5, span: 3 }}>
-                        <h3>My Groups</h3>
-                        <Card style={{
-                            marginTop: "20px",
-                            width: '18rem'
-                        }}>
-                            {groups}
-                        </Card>
-                    </Col>
+            <Row>
+                <Col md="3">
+                    <Row className="mt-4"></Row>
+                    <Row className="mx-3">
+                        <LeftNavbar />
+                    </Row>
 
-                </Row>
+                </Col>
+                <Col md = "6">
+                    <Row className = "mt-3">
+                        <Col md = "12" style = {{textAlign : "center"}}>
+                            <h1>My Groups</h1>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md= "9">
+                            <SearchBars groupNames={this.state.allUserGroups.map((group) => group.group_name)} onSearch={this.onSearch} />
+                        </Col>
+                        <Col md = "3">
+                            <Link to={{ pathname: '/groupDetails', state: { group_name: this.state.res } }}>
+                                <Button variant="primary">Visit Group</Button>
+                            </Link>
+                        </Col>
+                    </Row>
+                    <Row className = "mt-5" >
+                        <Col md= "6">
+                            <h3 style = {{
+                                position: "relative",
+                                fontSize: "18px",
+                                textTransform: "uppercase",
+                                color: "#999",
+                                padding: "5px 0"
+                            }}>Group Invitations</h3>
+                            <Card style={{
+                                marginTop: "20px",
+                                width: '18rem',
+                                border : "None"
+                            }}>
+                                {invitations}
+                            </Card>
+                        </Col>
+                        <Col md= "6">
+                            <h3 style={{
+                                position: "relative",
+                                textAlign: "right",
+                                fontSize: "18px",
+                                textTransform: "uppercase",
+                                color: "#999",
+                                padding: "5px"
+                            }}>
+                                My Groups</h3>
+                            <Card style={{
+                                marginTop: "20px",
+                                width: '18rem',
+                                border : "None"
+                            }}>
+                                {groups}
+                            </Card>
+                        </Col>
 
-            </Container>
+                    </Row>
+                </Col>
+                <Col md = "3">
+                </Col>
+            </Row>
         );
     }
 }

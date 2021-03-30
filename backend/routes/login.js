@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var sql = require('../sql')
+const passwordHash = require('password-hash');
 //route to Login Page
 // router.get('/login', function (req, res) {
 //     //check if user session exits
@@ -27,9 +28,11 @@ router.post('/', async function (req, res) {
                 });
                 res.send("Database Error");
               }
-            console.log(result)
-            if (result && result.length > 0){
-                if(req.body.password === result[0][0].password){
+            console.log("Result")
+            console.log(result.length)
+            if (result && result[0].length > 0){
+                if (passwordHash.verify(req.body.password, result[0][0].password))
+                {
                     let user = {
                         userId : result[0][0].user_id,
                         user_name : result[0][0].name,
@@ -44,7 +47,7 @@ router.post('/', async function (req, res) {
                     res.status(200).send(user)
                 }
                 else{
-                    res.status(401).send("Wrong Password")
+                    res.status(401).end("Wrong Password")
                 }
             }
             else {

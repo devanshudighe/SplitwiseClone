@@ -9,9 +9,7 @@ export default class DashboardCard extends Component {
         const { dashboard } = this.props;
         console.log(dashboard)
         return (
-            <Row>
-                <Col>
-                    <Row>
+                    <div>
                         <ListGroup variant = "flush">
                             <ListGroup.Item>
                                 <Row>
@@ -22,7 +20,7 @@ export default class DashboardCard extends Component {
                                 )}
                                 </Row>
                                 <Row>
-                                    you owe {numeral((Math.abs(dashboard.net_amt))).format('$0.00')}
+                            you owe {numeral((Math.abs(dashboard.net_amt))).format('$0.00')}
                                 </Row>
                             
                                     
@@ -31,11 +29,6 @@ export default class DashboardCard extends Component {
                             
                             
                         </ListGroup>
-                    </Row>
-                    
-                </Col>
-                <Col>
-                    <Row>
                         <ListGroup variant = "flush">
                             <ListGroup.Item>
                                 { dashboard.net_amt !== 0 && dashboard.net_amt > 0 ? (
@@ -50,10 +43,7 @@ export default class DashboardCard extends Component {
                             
                             
                         </ListGroup>
-                    </Row>
-                    
-                </Col>
-            </Row>
+                    </div>          
         )
     }
 }

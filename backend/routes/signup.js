@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var sql = require('../sql')
+const passwordHash = require('password-hash');
 // Signup page
 // var duplicateUser = false
 // router.get('/signup', function (req, res) {
@@ -16,8 +17,10 @@ var sql = require('../sql')
 
 
 router.post('/', async function (req, res) {
-    // console.log("Signup post req");
-    let details = `CALL storeUserInfo('${req.body.email}','${req.body.user_name}','${req.body.password}');`
+    console.log("Signup post req");
+    var hashedPassword = passwordHash.generate(req.body.password);
+    console.log(hashedPassword)
+    let details = `CALL storeUserInfo('${req.body.email}','${req.body.user_name}','${hashedPassword}');`
 
     sql.query(details, (err,result) => {
         if (err) {
@@ -26,9 +29,10 @@ router.post('/', async function (req, res) {
             });
             res.end("Database Error");
             }
+        console.log(result)
         if(result && result.length > 0 && result[0][0].flag){
             res.writeHead(200, {
-                'Content-Type': 'text/plain'
+                'Content-Type': 'text/plain' 
                 });
             res.end("User is Added");
         }

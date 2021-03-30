@@ -10,45 +10,45 @@ import { connect } from "react-redux";
 import { register } from "../../actions/auth";
 import { Redirect } from 'react-router-dom';
 
-const required = (value) => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        This field is required!
-      </div>
-    );
-  }
-};
+// const required = (value) => {
+//   if (!value) {
+//     return (
+//       <div className="alert alert-danger" role="alert">
+//         This field is required!
+//       </div>
+//     );
+//   }
+// };
 
-const validEmail = (value) => {
-  if (!isEmail(value)) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        This is not a valid email.
-      </div>
-    );
-  }
-};
+// const validEmail = (this.state.email) => {
+//   if (!isEmail(value)) {
+//     return (
+//       <div className="alert alert-danger" role="alert">
+//         This is not a valid email.
+//       </div>
+//     );
+//   }
+// };
 
-const vusername = (value) => {
-  if (value.length < 3 || value.length > 20) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        The username must be between 3 and 20 characters.
-      </div>
-    );
-  }
-};
+// const vusername = (value) => {
+//   if (value.length < 3 || value.length > 20) {
+//     return (
+//       <div className="alert alert-danger" role="alert">
+//         The username must be between 3 and 20 characters.
+//       </div>
+//     );
+//   }
+// };
 
-const vpassword = (value) => {
-  if (value.length < 6 || value.length > 40) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        The password must be between 6 and 40 characters.
-      </div>
-    );
-  }
-};
+// const vpassword = (value) => {
+//   if (value.length < 6 || value.length > 40) {
+//     return (
+//       <div className="alert alert-danger" role="alert">
+//         The password must be between 6 and 40 characters.
+//       </div>
+//     );
+//   }
+// };
 
 class Register extends Component {
   constructor(props) {
@@ -149,7 +149,8 @@ class Register extends Component {
                   value={this.state.user_name}
                   className="form-control"
                   onChange={this.onChangeUsername}
-                  validations={[required, vusername]}
+                  // validations={[vusername]}
+                  required
                 />
               </div>
               <div className="form-group">
@@ -160,7 +161,9 @@ class Register extends Component {
                   name="email"
                   value={this.state.email}
                   onChange={this.onChangeEmail}
-                  validations={[required, validEmail]}
+                  pattern="^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$'%&*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])$"
+                  // validations={[validEmail]}
+                  required
                 />
               </div>
               <div className="form-group">
@@ -171,7 +174,8 @@ class Register extends Component {
                   name="password"
                   value={this.state.password}
                   onChange={this.onChangePassword}
-                  validations={[required, vpassword]}/>
+                  // validations={[vpassword]}
+                  required />
               </div>
 
               <button type="submit" className="btn btn-dark btn-lg">Sign me up!</button>

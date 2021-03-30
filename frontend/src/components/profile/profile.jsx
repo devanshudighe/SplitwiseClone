@@ -90,6 +90,9 @@ class Profile extends Component {
         // image: res.data.image,
         ...this.fetchUserDetails()
       });
+      if(this.state.message === "Profile Updated"){
+        alert("Profile updated")
+      }
       // this.fetchUserDetails();
       // this.setState({ userId : res.data.results.userId})
       // this.setState({ name: res.data.results.user_name });
@@ -101,7 +104,6 @@ class Profile extends Component {
     })
       .catch(err => console.log(err))
   }
-
 
   // componentDidMount() {
   //   this.fetchUserDetails(this.state.user_id);
@@ -118,50 +120,48 @@ class Profile extends Component {
       return <Redirect to="/home" />;
     }
     return (
-      <div>
-      <div className = "mt-5">
-        <Row>
-            <Col md={{ span: 8, offset: 1 }}>
+      <Row className = "mt-5">
+        <Col md = "4">
+            <Row style = {{ justifyContent : "center"}}>
               <h4>Your Account</h4>
-            </Col>
-        </Row>
-        <Row>
-          <Col md={{ span: 3, offset: 1 }}>
-            <Image
-              style={{ width: '17rem' }}
-              src={profilePic}
-              alt="Generic placeholder"
-            />
-            <Form onSubmit={this.onUpload}>
-              <Form.Group as={Col} className="lg-3">
-                <Form.Control type="file" name="image" onChange={this.changeProfileImage} />
-                <br/>
-                <Button type="submit">Upload</Button>
-              </Form.Group>
-            </Form>
-          </Col>
-          <Col>
+            </Row>
+            <Row style = {{ justifyContent : "center"}}>
+              <Image
+                style={{ width: '15rem' }}
+                src={profilePic}
+                alt="Generic placeholder"
+              />
+            </Row>
+            <Row style={{ justifyContent: "center" }} className = "pt-2 pl-5">
+                <Form onSubmit={this.onUpload} >
+                  <Form.Group >
+                    <Form.Control type="file" name="image" onChange={this.changeProfileImage} />
+                    
+                    <Button type="submit" size = "sm" style = {{marginTop : "5px"}}>Upload</Button>
+                  </Form.Group>
+                </Form>
+            </Row>
+        </Col>
+          <Col md = "5">
           <Form onSubmit={this.UpdateProfileHandler}>
             <Form.Row>
-              <Form.Group as = {Col} md="2">
+              <Form.Group as = {Col}>
                 <div>
                   <Form.Label>Your name</Form.Label>
-                  <Form.Control name="name" type="text" onChange={this.onChangeFields} value={this.state.user_name} />
+                  <Form.Control size = "sm" name="name" type="text" onChange={this.onChangeFields} value={this.state.user_name} />
 
                   <Form.Label>Your email address</Form.Label>
-                  <Form.Control name="email" type="email" onChange={this.onChangeFields} value={this.state.email} />
+                  <Form.Control size = "sm" name="email" type="email" onChange={this.onChangeFields} value={this.state.email} />
                 
                   <Form.Label>Your phone number</Form.Label>
-                  <Form.Control name="phone" type="text" onChange={this.onChangeFields} value={this.state.phone} required />
+                  <Form.Control size = "sm" name="phone" type="text" onChange={this.onChangeFields} value={this.state.phone} required />
                 </div>
               </Form.Group>
-            </Form.Row>
-            <Form.Row>
-              <Form.Group as = {Col} md = "4">
+              <Form.Group as = {Col}>
                 <div>
                   <Form.Label>Your default currency</Form.Label>
                   {/* <Form.Label>(for future expenses)</Form.Label> */}
-                  <Form.Control name="currency" as="select" onChange={this.onChangeFields} value={this.state.currency} required>
+                  <Form.Control size = "sm" name="currency" as="select" onChange={this.onChangeFields} value={this.state.currency} required>
                     <option value="USD">USD ($)</option>
                     <option value="KWD">KWD (KWD)</option>
                     <option value="BHD">BHD (BD)</option>
@@ -171,7 +171,7 @@ class Profile extends Component {
                   </Form.Control>
                 
                   <Form.Label>Your time zone</Form.Label>
-                  <Form.Control name="timeZone" as="select" onChange={this.onChangeFields} value={this.state.timeZone} required >
+                  <Form.Control size = "sm" name="timeZone" as="select" onChange={this.onChangeFields} value={this.state.timeZone} required >
                     <option value="Etc/GMT+12">(GMT-12:00) International Date Line West</option>
                     <option value="Pacific/Midway">(GMT-11:00) Midway Island, Samoa</option>
                     <option value="Pacific/Honolulu">(GMT-10:00) Hawaii</option>
@@ -257,7 +257,7 @@ class Profile extends Component {
                   </Form.Control>
                 
                   <Form.Label>Language</Form.Label>
-                  <Form.Control name="language" as="select" value={this.state.language} onChange={this.onChangeFields} required>
+                  <Form.Control size = "sm" name="language" as="select" value={this.state.language} onChange={this.onChangeFields} required>
                     <option value="en">English</option>
                     <option value="de">Deutsch</option>
                     <option value="es">Español</option>
@@ -274,15 +274,16 @@ class Profile extends Component {
                   </Form.Control>
                   </div>
                 </Form.Group>
-              </Form.Row>
-              <Form.Group as={Col} className="offset-6">
+            </Form.Row>
+            <Form.Row style={{ textAlign: "right" }}>
+              <Form.Group as={Col} >
                 <Button type="submit">Save</Button>
               </Form.Group>
+            </Form.Row>
+              
             </Form> 
           </Col>
-        </Row>
-      </div>
-    </div>
+      </Row>
     );
   }
 }

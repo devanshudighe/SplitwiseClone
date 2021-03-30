@@ -81,8 +81,8 @@ export default class NavRight extends Component{
             });
         }
         return(
-            <Container className="mt-5">
-                <div className="pt-5 text-muted">Group Members</div>
+            <Container className="mt-4">
+                <div className="pt-2 text-muted">Group Members</div>
                 <div className="pb-5" />
                 {collectBalances}
                 <div className="p-5" />

@@ -45,7 +45,8 @@ export default class CreateGroups extends Component {
           uploadedFile: event.target.files[0]
         });
       }
-      onUpload =  () => {
+      onUpload =  (e) => {
+        e.preventDefault();
         console.log(this.state.uploadedFile)
         // const user = JSON.parse(localStorage.getItem('user')).userId;
         const formData = new FormData();
@@ -114,12 +115,12 @@ export default class CreateGroups extends Component {
         if (this.state.groupCreated === 'New Group Created') {
             loggedUser = (
                 <Form.Row>
-                    <Form.Group as={Col} md="6">
+                    <Form.Group as={Col} md = "4">
                         
                         {/* <SearchBars users={this.state.allUsers.map((user) => user.name)} onSearch={this.onSearchName} /> */}
                         <Form.Control type="text" name="invite_name" placeholder={JSON.parse(localStorage.getItem('user')).user_name} onChange={this.onAddPersonName} disabled />
                     </Form.Group>
-                    <Form.Group as={Col} md="6">
+                    <Form.Group as={Col} md = "4">
                         
                         {/* <SearchBars users={this.state.allUsers.map((user) => user.email)} onSearch={this.onSearchEmail} /> */}
                         <Form.Control type="email" name="invite_email" placeholder={JSON.parse(localStorage.getItem('user')).email} onChange={this.onAddPersonEmail} disabled />
@@ -135,8 +136,7 @@ export default class CreateGroups extends Component {
             invitationForms.push(<Members groupName={this.state.groupName} allUsers = {this.state.allUsers} />);
         }
         return (
-            <Container className="mt-5">
-                <Row>
+            <Row className="mt-5">
                     <Col md={{ offset: 2, span: 3 }}>
                         <Image
                             style={{ width: '17rem' }}
@@ -151,7 +151,7 @@ export default class CreateGroups extends Component {
                             </Form.Group>
                         </Form>
                     </Col>
-                    <Col md={{ span: 4 }} >
+                    <Col md={{ span: 6 }} >
                         <h2 style={{
                             textTransform: "uppercase",
                             fontSize: "16px",
@@ -176,7 +176,7 @@ export default class CreateGroups extends Component {
                                     style={{
                                     fontSize: "24px",
                                     height: "42px",
-                                    width: "95%",
+                                    width: "70%",
                                     lineHeight: "140%",
                                     marginBottom: "17px"
                                 }} />
@@ -198,15 +198,14 @@ export default class CreateGroups extends Component {
                         {invitationForms}
                         <Form.Row>
                             <Form.Group>
-                                <Button type="submit" className="btn btn-primary btn-md" onClick = {this.onAddInvitationForm}>Add Member</Button>
+                                <Button type="submit" className="btn btn-primary btn-sm" onClick = {this.onAddInvitationForm}>Add Member</Button>
                             </Form.Group>
                         </Form.Row>
                         <Form.Row>
                             <Link to="/dashboard" className="btn btn-primary btn-md">Save</Link>
                         </Form.Row>
                     </Col>
-                </Row>
-            </Container>
+            </Row>
 
         );
     }

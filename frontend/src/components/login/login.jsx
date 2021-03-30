@@ -66,6 +66,7 @@ class Login extends Component {
         .catch(() => {
           this.setState({
             loading: false
+
           });
         });
     } else {
@@ -78,11 +79,17 @@ class Login extends Component {
   render() {
     const { isLoggedIn, message } = this.props;
     console.log(this.props);
+    let messages = "";
     if (isLoggedIn) {
       // localStorage.setItem('userId',);
-      return <Redirect to="/profile" />;
+      return <Redirect to="/dashboard" />;
     }
-
+    else if( message === "NO_USER"){
+      messages = "User does not exist"
+    }
+    else if( message === "Wrong Password"){
+      messages = "Enter valid email or password";
+    }
     return (
       <Container fluid 
       style= {{
@@ -100,7 +107,6 @@ class Login extends Component {
               />
             </Col>
             {/* <div className="container">
-
             </div> */}
           </Col>
           <Col md="auto">
@@ -111,6 +117,7 @@ class Login extends Component {
               }}>
               <h6>WELCOME TO SPLITWISE</h6>
               <div className="form-group">
+                <div style={{ color: "#ff0000" }}>{messages}</div><br />
                 <label>Email address</label>
                 <input
                   type="email"
@@ -119,6 +126,7 @@ class Login extends Component {
                   className="form-control"
                   onChange={this.onChangeEmail}
                   validations={[required]}
+                  required
                   placeholder="Enter email" />
               </div>
 
@@ -131,7 +139,8 @@ class Login extends Component {
                   name="password"
                   value={this.state.password}
                   onChange={this.onChangePassword}
-                  validations={[required]} />
+                  validations={[required]}
+                  required />
               </div>
               <button type="submit" className="btn btn-dark btn-lg">Log in</button>
               <CheckButton
@@ -163,4 +172,3 @@ function mapStateToProps(state) {
   };
 }
 export default connect(mapStateToProps)(Login);
-// export default connect(mapStateToProps, { login })(Login);

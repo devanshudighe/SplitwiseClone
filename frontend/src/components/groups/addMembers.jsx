@@ -8,7 +8,11 @@ import Select from "react-select";
 class Members extends Component {
     constructor(props) {
         super(props);
-        this.state = { invitationName: '', invitationEmail: '' };
+        this.state = { 
+          invitationName: '', 
+          invitationEmail: '',
+          email : ''
+        };
       }
       
 
@@ -22,19 +26,27 @@ class Members extends Component {
             )
         })
         console.log(this.state.res)
-    }
-
-    onSearchEmail = async (email) => {
-        // console.log(name)
-        const list = this.props.allUsers.filter( (user) =>user.email.toLowerCase().includes(email.toLowerCase()))
-        console.log(list)
+        const emailObj = this.props.allUsers.find((res) => res.name === name);
         await this.setState({
-            res : list.map(l => 
-                l.email
-            )
-        })
-        console.log(this.state.res)
-    }
+          email: emailObj.email,
+          invitationName: name,
+          invitationEmail: emailObj.email,
+          // nameErrorMessage: null,
+        });
+      }
+
+    
+    // onSearchEmail = async (email) => {
+    //     // console.log(name)
+    //     const list = this.props.allUsers.filter( (user) =>user.email.toLowerCase().includes(email.toLowerCase()))
+    //     console.log(list)
+    //     await this.setState({
+    //         res : list.map(l => 
+    //             l.email
+    //         )
+    //     })
+    //     console.log(this.state.res)
+    // }
 
     editSearchTermName = async (selectedOptionName) => {
       this.setState({
@@ -51,12 +63,12 @@ class Members extends Component {
       // })
       // console.log(this.state.res)
     }
-    editSearchTermEmail = (selectedOptionEmail) => {
-      this.setState({
-          selectedOptionEmail
-      })
-      this.onSearchEmail(selectedOptionEmail.value)
-    }
+    // editSearchTermEmail = (selectedOptionEmail) => {
+    //   this.setState({
+    //       selectedOptionEmail
+    //   })
+    //   this.onSearchEmail(selectedOptionEmail.value)
+    // }
 
 
 
@@ -67,11 +79,11 @@ class Members extends Component {
       //   });
       // }
     
-      // onChangeInvitationEmail = (e) => {
-      //   this.setState({
-      //     invitationEmail: e.target.value,
-      //   });
-      // }
+      onChangeInvitationEmail = (e) => {
+        this.setState({
+          invitationEmail: e.target.value,
+        });
+      }
     
       onInvite = (e) => {
         e.preventDefault();
@@ -90,7 +102,7 @@ class Members extends Component {
             console.log(err);
           });
       }
-    render() {
+    render(){
         const searchListName = this.props.allUsers.map(obj => ({
           value : obj.name,
           label : obj.name,
@@ -107,11 +119,11 @@ class Members extends Component {
                 <Form.Group>
                     <Row>
                         <Col>
-                            <Select type= 'text' value = {this.state.selectedOptionName} onChange = {this.editSearchTermName} options = {searchListName} placeholder = 'Search for a name!'/>
+                            <Select maxMenuHeight = {200} type= 'text' value = {this.state.selectedOptionName} onChange = {this.editSearchTermName} options = {searchListName} placeholder = 'name!'/>
                             {/* <Form.Control type = "text" name = "invitationName" placeholder="Name" onChange = {this.onChangeInvitationName} /> */}
                         </Col>
                         <Col>
-                            <Select type= 'text' value = {this.state.selectedOptionEmail} onChange = {this.editSearchTermEmail} options = {searchListEmail} placeholder = 'Search for an email!'/>
+                            <Select maxMenuHeight = {200} type= 'text' value = {this.state.email} onChange = {this.onChangeInvitationEmail} options = {searchListEmail} placeholder = 'email!'/>
                             {/* <Form.Control type = "email" name = "invitationEmail" placeholder="Email" onChange = {this.onChangeInvitationEmail} /> */}
                         </Col>
                         <Col>

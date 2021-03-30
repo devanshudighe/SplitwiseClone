@@ -2,7 +2,7 @@ use splitwise;
 -------------------------------------------------------------------------------------
 DROP Procedure if EXISTS  `getUserInfo`;
 DELIMITER ;;
-CREATE PROCEDURE `getUserInfo` (_email varchar(50))
+CREATE PROCEDURE `getUserInfo` (_email varchar(255))
 BEGIN
 SELECT user_id,name,email,password,phone,currency,language,timeZone,imageInfo  FROM UserDetails WHERE email = _email;
 END;;
@@ -10,7 +10,7 @@ DELIMITER ;
 -------------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `storeUserInfo`;
 DELIMITER ;;
-CREATE PROCEDURE `storeUserInfo`(_email varchar(50), _name varchar(50), _password varchar(50))
+CREATE PROCEDURE `storeUserInfo`(_email varchar(255), _name varchar(255), _password varchar(255))
 BEGIN
     IF NOT EXISTS(SELECT email from UserDetails WHERE email = _email) THEN
         INSERT INTO UserDetails (`name`, email, `password`, currency,language,timeZone,imageInfo) VALUES (_name, _email, _password,"USD","en","America/Los_Angeles","userPlaceholder.png") ;

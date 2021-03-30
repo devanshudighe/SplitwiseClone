@@ -10,7 +10,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import LeftNavbar from "../navbar/navbarLeft";
 
 export default class RecentActivity extends Component {
     constructor(props) {
@@ -124,15 +124,23 @@ export default class RecentActivity extends Component {
 
         console.log(filterElement)
         return (
-            <Container className="mt-3" >
-                <Row>
-                    <Col md={{ offset: 3, span: 4 }}>
-                        <h1>Recent Activity</h1>
-                    </Col>
-                    <Col>
+            <Row className="mt-3" >
+                <Col md="3">
+                    <Row className="mt-4"></Row>
+                    <Row className="mx-3">
+                        <LeftNavbar />
+                    </Row>
+
+                </Col>
+                <Col md= "6">
+                    <Row>
+                        <Col md = "8" style = {{textAlign : "center"}}>
+                            <h1>Recent Activity</h1>
+                        </Col>
+                        <Col md = "2">
                         <FormControl className={classes.formControl}>
                             <InputLabel shrink id="demo-simple-select-placeholder-label-label">
-                                Sort
+                            Sort
                             </InputLabel>
                             <Select
                                 labelId="demo-simple-select-placeholder-label-label"
@@ -146,11 +154,11 @@ export default class RecentActivity extends Component {
                                 <MenuItem value = "old">Old to New</MenuItem>
                             </Select>
                         </FormControl>
-                    </Col>
-                    <Col>
+                        </Col>
+                        <Col md = "2">
                         <FormControl className={classes.formControl}>
                             <InputLabel shrink id="demo-simple-select-placeholder-label-label">
-                                Filter
+                            Filter
                             </InputLabel>
                             <Select
                                 labelId="demo-simple-select-placeholder-label-label"
@@ -165,28 +173,33 @@ export default class RecentActivity extends Component {
                             </Select>
                         </FormControl>
                     </Col>
-                </Row>
-                <Row>
-                    <Col md = {{
-                            span : "2",
-                            offset : "1"
+                    </Row>
+                    <Row>
+                        <Col md={{
+                            span: "2",
+                            offset: "1"
                         }}>
-                    </Col>
-                    <Col md = {{
-                        span : "6"
-                    }}>
-                        <ListGroup variant = 'flush' style = {{
-                            width : "100%"
+                        </Col>
+                        <Col md={{
+                            span: "6"
                         }}>
-                            {groupElements}
-                        </ListGroup>
-                    </Col>
-                    <Col md = {{
-                            span : "4"
+                            <ListGroup variant='flush' style={{
+                                width: "100%"
+                            }}>
+                                {groupElements}
+                            </ListGroup>
+                        </Col>
+                        <Col md={{
+                            span: "4"
                         }}>
-                    </Col>
-                </Row>
-            </Container>
+                        </Col>
+                    </Row>
+                </Col>
+                <Col md = "3">
+
+                </Col>
+            </Row>
+                
         )
     }
 }
